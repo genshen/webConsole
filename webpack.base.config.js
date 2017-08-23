@@ -11,8 +11,10 @@ module.exports = {
         path: path.join(__dirname, './dist')
     },
     externals: {
-        // 'vue': 'window.Vue',
-        // 'vue-router': 'window.VueRouter',
+        'vue': 'window.Vue',
+        'vue-router': 'window.VueRouter',
+        // 'vue-i18n': 'window.VueI18n',
+        'iview': 'window.iview',
         // 'axios': 'window.axios',
         // 'js-cookie': 'window.js-cookie',
         // 'xterm': 'window.xterm'

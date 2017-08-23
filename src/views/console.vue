@@ -1,57 +1,65 @@
 <style scoped>
 .console {
     width: 100%;
-    height:100%;
+    height: 100%;
     text-align: center;
 }
-.header{
-    height:60px;
-}
-.toolsbar{
-    position:absolute;
-    right:80px;
-    top:160px;
-    z-index: 10;
-}
-.toolsbar_exit_fullscreen{
-    position:absolute;
-    right:80px;
-    top:90px;
-    z-index:256;
-}
-#terminal {
-    font-size: 14px;
-    height:calc(100% - 60px);
-    background:#000000;
-    padding:0 0 0 6px;
+
+.header {
+    height: 60px;
 }
 
-.layout-logo{
-        width: 100px;
-        height: 30px;
-        background: #5b6270;
-        border-radius: 3px;
-        float: left;
-        position: relative;
-        top: 15px;
-        left: 20px;
+.toolsbar {
+    position: absolute;
+    right: 80px;
+    top: 160px;
+    z-index: 10;
 }
-.layout-nav-header{
+
+.toolsbar_exit_fullscreen {
+    position: absolute;
+    right: 80px;
+    top: 90px;
+    z-index: 256;
+}
+
+#terminal {
+    font-size: 14px;
+    height: calc(100% - 60px);
+    background: #000000;
+    padding: 0 0 0 6px;
+}
+
+.layout-logo {
+    width: 100px;
+    height: 30px;
+    background: #5b6270;
+    border-radius: 3px;
+    float: left;
+    position: relative;
+    top: 15px;
+    left: 20px;
+}
+
+.layout-nav-header {
     height: 60px;
-    text-align:left;
-    padding-left:6px;
-    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    text-align: left;
+    padding-left: 6px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
 }
-.layout-nav-header i{
-    color:#fff;
+
+.layout-nav-header i {
+    color: #fff;
 }
-.layout-nav{
+
+.layout-nav {
     margin: 0 auto;
 }
-.layout-nav-right{
-    float:right;
+
+.layout-nav-right {
+    float: right;
     padding-right: 36px;
-    text-align:right;
+    text-align: right;
 }
 </style>
 <style>
@@ -63,41 +71,59 @@
             <Menu mode="horizontal" theme="dark" active-name="1">
                 <Row>
                     <Col :xs="0" :sm="6">
-                        <div class="layout-logo"></div>
+                    <div class="layout-logo"></div>
                     </Col>
-                     <Col :xs="8" :sm="0">
-                        <div class="layout-nav-header">
-                            <i-button type="text">
-                                <Icon type="navicon" size="32"></Icon>
-                            </i-button>
-                        </div>
+                    <Col :xs="8" :sm="0">
+                    <div class="layout-nav-header">
+                        <i-button type="text">
+                            <Icon type="navicon" size="32"></Icon>
+                        </i-button>
+                    </div>
                     </Col>
                     <Col :xs="0" :sm="12">
-                        <div class="layout-nav">
-                            <Icon v-if="connectionAlive" type="record" color="#19be6b"></Icon>
-                            <Icon v-else type="record" color="#bbbec4"></Icon>
-                            <a href="javascript:void(0)">{{host}}</a>
-                        </div>
+                    <div class="layout-nav">
+                        <Icon v-if="connectionAlive" type="record" color="#19be6b"></Icon>
+                        <Icon v-else type="record" color="#bbbec4"></Icon>
+                        <a href="javascript:void(0)">{{host}}</a>
+                    </div>
                     </Col>
                     <Col :xs="16" :sm="6">
-                        <div class="layout-nav-right">
-                            <router-link  v-if="!connectionAlive" :to="{ path: 'signin' }">{{$t('console.relogin')}}</router-link>
-                            <Dropdown v-else @on-click="handleDropdownMunu">
-                                <a href="javascript:void(0)">
-                                    <Icon type="person"></Icon>&nbsp;{{username}}
-                                    <Icon type="arrow-down-b"></Icon>
-                                </a>
-                                <Dropdown-menu slot="list">
-                                    <Dropdown-item name="exit">
-                                        <Icon type="android-exit"></Icon>&emsp; {{$t("console.nav_user_exit")}}
-                                    </Dropdown-item>
-                                </Dropdown-menu>
-                            </Dropdown>
-                        </div>
+                    <div class="layout-nav-right">
+                        <router-link v-if="!connectionAlive" :to="{ path: 'signin' }">{{$t('console.relogin')}}</router-link>
+                        <Dropdown v-else @on-click="handleDropdownMunu">
+                            <a href="javascript:void(0)">
+                                <Icon type="person"></Icon>&nbsp;{{username}}
+                                <Icon type="arrow-down-b"></Icon>
+                            </a>
+                            <Dropdown-menu slot="list">
+                                <Dropdown-item name="exit">
+                                    <Icon type="android-exit"></Icon>&emsp; {{$t("console.nav_user_exit")}}
+                                </Dropdown-item>
+                            </Dropdown-menu>
+                        </Dropdown>
+                    </div>
                     </Col>
                 </Row>
             </Menu>
         </div>
+        <Modal v-model="uploadFile.model" :closable="false" :mask-closable="false">
+            <p slot="header">
+                <Icon type="upload"></Icon>
+                <span>{{$t("console.modal_upload_title")}}</span>
+            </p>
+            <div>
+                <span v-html="$t('console.modal_upload_hint')"></span>
+                <Upload multiple type="drag" :action="uploadFile.action">
+                    <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>{{$t("console.click_or_drag_to_upload")}}</p>
+                    </div>
+                </Upload>
+            </div>
+            <div slot="footer">
+                <Button type="primary" @click="uploadFileOnOk" size="large">{{$t("console.modal_upload_ok_btn")}}</Button>
+            </div>
+        </Modal>
         <div class="toolsbar">
             <!-- <Button type="primary" size="large" shape="circle" icon="wrench"></Button> -->
             <Button-group vertical>
@@ -119,36 +145,38 @@ import Util from '../libs/util';
 let term = null;
 
 export default {
-     data(){
-            return{
-                connectionAlive:true,
-                host:'waiting connection',
-                username:'Loading',
-                statusIsFullscreen: false
+    data() {
+        return {
+            connectionAlive: true,
+            host: 'waiting connection',
+            username: 'Loading',
+            statusIsFullscreen: false,
+            termConfig: {
+                cols: 120,
+                rows: 28,
+            },
+            uploadFile: {
+                model: false,
+                action: Util.loadUrl('/ssh/uploadfile')
             }
+        }
     },
     methods: {
-        handleStart() {
-            this.$Modal.info({
-                title: 'Bravo',
-                content: 'Now, enjoy the convenience of iView.'
-            });
-        },
-        handleDropdownMunu(name){
-            switch(name){
+        handleDropdownMunu(name) {
+            switch (name) {
                 case 'exit':
-                // window.open("");
+                    // window.open("");
                     this.$Message.warning('under developing'); //todo
-                break;
+                    break;
             }
         },
-        toolsBarRefresh(){
+        toolsBarRefresh() {
             this.$Message.warning('under developing'); //todo
         },
-        toolsBarUploadFiles(){
-            this.$Message.warning('under developing'); //todo
+        toolsBarUploadFiles() {
+            this.uploadFile.model = true;
         },
-        toolsBarFullscreen(){
+        toolsBarFullscreen() {
             this.$Notice.open({
                 title: this.$t('console.ecs_to_exit_fullscreen')
             });
@@ -156,12 +184,15 @@ export default {
             term.toggleFullscreen(true);
             return false;
         },
-        toolsBarSettings(){
+        toolsBarSettings() {
             this.$Message.warning('under developing'); //todo
         },
-        exitFullscreenMode(){
+        exitFullscreenMode() {
             this.statusIsFullscreen = false;
             term.toggleFullscreen(false);
+        },
+        uploadFileOnOk() {
+            this.uploadFile.model = false;
         }
     },
     created() {
@@ -177,17 +208,22 @@ export default {
         // let self = this;
         term = new Terminal({
             cursorBlink: true,
-            rows: 28
+            rows: this.termConfig.rows,
+            cols: this.termConfig.cols,
         });
         Terminal.loadAddon('attach');
         Terminal.loadAddon('fullscreen');
         Terminal.loadAddon('fit');
 
         term.open(document.getElementById('terminal'));
+        term.on('resize', ((size) => {
+            this.termConfig.rows = size.rows;
+            this.termConfig.cols = size.cols;
+        }));
         term.fit();
-        let socket = new WebSocket('ws://' + Util.config.Domain + '/ws/ssh');
-        socket.onclose = (() =>{
-            //todo set cursorBlink to false
+        let socket = new WebSocket('ws://' + Util.config.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows);
+        socket.onclose = (() => {
+            term.setOption('cursorBlink', false);
             this.connectionAlive = false;
             this.$Notice.error({
                 title: this.$t('console.web_socket_disconnect')

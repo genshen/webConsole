@@ -5,8 +5,8 @@ import Routers from './router';
 
 import Util from './libs/util';
 import App from './app.vue';
-import 'iview/dist/styles/iview.css';
-import 'xterm/dist/xterm.css';  //xterm.css
+// import 'iview/dist/styles/iview.css';
+// import 'xterm/dist/xterm.css';  //xterm.css
 
 import VueI18n from 'vue-i18n';
 import Locales from './locale';
