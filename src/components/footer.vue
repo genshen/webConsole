@@ -31,21 +31,20 @@
 </template>
 
 <script>
-import Vue from 'vue';
 
 export default {
-    methods: {
-        switchLang() {
-            if (Vue.config.lang === 'zh-CN') {
-                Vue.config.lang = 'en-US';
-                window.localStorage.setItem('language','en-US');
-            } else if (Vue.config.lang === 'en-US') {
-                Vue.config.lang = 'zh-CN';
-                window.localStorage.setItem('language','zh-CN');
-            }
-        }
+  methods: {
+    switchLang () {
+      if (this.$i18n.locale === 'zh') {
+        this.$i18n.locale = 'en'
+        localStorage.setItem('language', 'en')
+      } else if (this.$i18n.locale === 'en') {
+        this.$i18n.locale = 'zh'
+        localStorage.setItem('language', 'zh')
+      }
     }
-};
+  }
+}
 </script>
 
 <!---

@@ -22,7 +22,6 @@
     top: 90px;
     z-index: 256;
 }
-
 #terminal {
     font-size: 14px;
     height: calc(100% - 60px);
@@ -140,96 +139,102 @@
     </div>
 </template>
 <script>
-import Terminal from 'xterm';
-import Util from '../libs/util';
-let term = null;
+  import Terminal from 'xterm'
+  import Util from '@/libs/utils'
+  import Config from '@/config/config'
 
-export default {
-    data() {
-        return {
-            connectionAlive: true,
-            host: 'waiting connection',
-            username: 'Loading',
-            statusIsFullscreen: false,
-            termConfig: {
-                cols: 120,
-                rows: 28,
-            },
-            uploadFile: {
-                model: false,
-                action: Util.loadUrl('/ssh/uploadfile')
-            }
+  // import 'xterm/dist/xterm.css';  //xterm.css D:\workspace\javascript\frontend\sshwebconsole\node_modules\
+  import 'xterm/dist/addons/fullscreen/fullscreen.css'
+  /* And for typescript, see: https://webpack.js.org/guides/typescript/ */
+
+  let term = null
+
+  export default {
+    data () {
+      return {
+        connectionAlive: true,
+        host: 'waiting connection',
+        username: 'Loading',
+        statusIsFullscreen: false,
+        termConfig: {
+          cols: 120,
+          rows: 28
+        },
+        uploadFile: {
+          model: false,
+          action: Util.loadUrl('/ssh/uploadfile')
         }
+      }
     },
     methods: {
-        handleDropdownMunu(name) {
-            switch (name) {
-                case 'exit':
-                    // window.open("");
-                    this.$Message.warning('under developing'); //todo
-                    break;
-            }
-        },
-        toolsBarRefresh() {
-            this.$Message.warning('under developing'); //todo
-        },
-        toolsBarUploadFiles() {
-            this.uploadFile.model = true;
-        },
-        toolsBarFullscreen() {
-            this.$Notice.open({
-                title: this.$t('console.ecs_to_exit_fullscreen')
-            });
-            this.statusIsFullscreen = true;
-            term.toggleFullscreen(true);
-            return false;
-        },
-        toolsBarSettings() {
-            this.$Message.warning('under developing'); //todo
-        },
-        exitFullscreenMode() {
-            this.statusIsFullscreen = false;
-            term.toggleFullscreen(false);
-        },
-        uploadFileOnOk() {
-            this.uploadFile.model = false;
+      handleDropdownMunu (name) {
+        switch (name) {
+          case 'exit':
+            // window.open("")
+            this.$Message.warning('under developing') // todo
+            break
         }
+      },
+      toolsBarRefresh () {
+        this.$Message.warning('under developing') // todo
+      },
+      toolsBarUploadFiles () {
+        this.uploadFile.model = true
+      },
+      toolsBarFullscreen () {
+        this.$Notice.open({
+          title: this.$t('console.ecs_to_exit_fullscreen')
+        })
+        this.statusIsFullscreen = true
+        term.toggleFullscreen(true)
+        return false
+      },
+      toolsBarSettings () {
+        this.$Message.warning('under developing') // todo
+      },
+      exitFullscreenMode () {
+        this.statusIsFullscreen = false
+        term.toggleFullscreen(false)
+      },
+      uploadFileOnOk () {
+        this.uploadFile.model = false
+      }
     },
-    created() {
-        if (window.localStorage.getItem('user.host')) {
-            this.host = window.localStorage.getItem('user.host');
-        }
-        if (window.localStorage.getItem('user.username')) {
-            this.username = window.localStorage.getItem('user.username');
-        }
-        // this.$router.replace({ name: 'signin' });
+    created () {
+      if (window.localStorage.getItem('user.host')) {
+        this.host = window.localStorage.getItem('user.host')
+      }
+      if (window.localStorage.getItem('user.username')) {
+        this.username = window.localStorage.getItem('user.username')
+      }
+      // this.$router.replace({ name: 'signin' })
     },
-    mounted() {
-        // let self = this;
-        term = new Terminal({
-            cursorBlink: true,
-            rows: this.termConfig.rows,
-            cols: this.termConfig.cols,
-        });
-        Terminal.loadAddon('attach');
-        Terminal.loadAddon('fullscreen');
-        Terminal.loadAddon('fit');
+    mounted () {
+      // let self = this
+      term = new Terminal({
+        cursorBlink: true,
+        rows: this.termConfig.rows,
+        cols: this.termConfig.cols
+      })
+      Terminal.loadAddon('attach')
+      Terminal.loadAddon('fullscreen')
+      Terminal.loadAddon('fit')
 
-        term.open(document.getElementById('terminal'));
-        term.on('resize', ((size) => {
-            this.termConfig.rows = size.rows;
-            this.termConfig.cols = size.cols;
-        }));
-        term.fit();
-        let socket = new WebSocket('ws://' + Util.config.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows);
-        socket.onclose = (() => {
-            term.setOption('cursorBlink', false);
-            this.connectionAlive = false;
-            this.$Notice.error({
-                title: this.$t('console.web_socket_disconnect')
-            });
-        });
-        term.attach(socket);
+      term.open(document.getElementById('terminal'))
+      term.on('resize', (size) => {
+        this.termConfig.rows = size.rows
+        this.termConfig.cols = size.cols
+      })
+      term.fit()
+      let socket = new WebSocket('ws://' + Config.net.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows)
+      socket.onclose = () => {
+        term.setOption('cursorBlink', false)
+        this.connectionAlive = false
+        this.$Notice.error({
+          title: this.$t('console.web_socket_disconnect')
+        })
+      }
+      term.attach(socket)
     }
-};
+  }
 </script>

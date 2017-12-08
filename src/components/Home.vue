@@ -37,7 +37,7 @@
                     </h2>
                     </Col>
                 </Row>
-                
+
             </div>
         </div>
         <FooterBar></FooterBar>
@@ -45,15 +45,16 @@
 </template>
 
 <script>
-import FooterBar from './footer.vue';
-export default {
+  import FooterBar from './footer.vue'
+
+  export default {
     components: {
-        FooterBar
+      FooterBar
     },
     methods: {
-        toSignIn() {
-            this.$router.push({ name: 'signin' });
-        }
+      toSignIn () {
+        this.$router.push({name: 'signin'})
+      }
     }
-};
+  }
 </script>
