@@ -227,16 +227,27 @@
         this.termConfig.cols = size.cols
       })
       term.fit()
-      let socket = new WebSocket('ws://' + Config.net.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows)
-      socket.onclose = () => {
-        term.setOption('cursorBlink', false)
-        this.connectionAlive = false
+
+      let _t = sessionStorage.getItem(Config.jwt.tokenName)
+      if (_t) {
+        let socket = new WebSocket('ws://' + Config.net.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
+          '&' + Config.jwt.tokenName + '=' + _t)
+        socket.onclose = () => {
+          term.setOption('cursorBlink', false)
+          sessionStorage.removeItem(Config.jwt.tokenName)
+          this.connectionAlive = false
+          this.$Notice.error({
+            title: this.$t('console.web_socket_disconnect')
+          })
+        }
+        sshWebSocket.bindTerminal(term, socket, true, -1)
+        // term.attach(socket)
+      } else {
         this.$Notice.error({
-          title: this.$t('console.web_socket_disconnect')
+          title: this.$t('console.web_socket_expire')
         })
+        this.$router.replace({name: 'signin'})
       }
-      sshWebSocket.bindTerminal(term, socket, true, true)
-      // term.attach(socket)
     }
   }
 </script>

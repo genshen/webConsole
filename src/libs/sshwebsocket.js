@@ -1,3 +1,5 @@
+import {Base64} from 'js-base64'
+
 const sshWebSocket = {}
 sshWebSocket.bindTerminal = function (term, websocket, bidirectional, bufferedTime) {
   term.socket = websocket
@@ -10,15 +12,15 @@ sshWebSocket.bindTerminal = function (term, websocket, bidirectional, bufferedTi
       } else {
         messageBuffer = ev.data
         setTimeout(function () {
-          term.write(JSON.stringify({type: 'data', data: messageBuffer}))
+          term.write(messageBuffer)
         }, bufferedTime)
       }
     } else {
-      term.write(JSON.stringify({type: 'data', data: ev.data}))
+      term.write(ev.data)
     }
   }
   let handleTerminalData = function (data) {
-    websocket.send(data) // todo: json
+    websocket.send(JSON.stringify({type: 'terminal', data: Base64.encode(data)}))
   }
 
   websocket.onmessage = handleWebSocketMessage
@@ -26,11 +28,17 @@ sshWebSocket.bindTerminal = function (term, websocket, bidirectional, bufferedTi
     term.on('data', handleTerminalData)
   }
 
+  // send heartbeat package to avoid closing webSocket connection in some proxy environmental such as nginx.
+  let heartBeatTimer = setInterval(function () {
+    console.log('ok')
+    websocket.send(JSON.stringify({type: 'message', data: ''}))
+  }, 20 * 1000)
+
   websocket.addEventListener('close', function () {
     websocket.removeEventListener('message', handleWebSocketMessage)
     term.off('data', handleTerminalData)
-    console.log('socket closed!')
     delete term.socket
+    clearInterval(heartBeatTimer)
   })
 }
 
