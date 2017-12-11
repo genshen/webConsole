@@ -142,6 +142,7 @@
   import Terminal from 'xterm'
   import Util from '@/libs/utils'
   import Config from '@/config/config'
+  import sshWebSocket from '@/libs/sshWebSocket'
 
   // import 'xterm/dist/xterm.css';  //xterm.css D:\workspace\javascript\frontend\sshwebconsole\node_modules\
   import 'xterm/dist/addons/fullscreen/fullscreen.css'
@@ -216,7 +217,7 @@
         rows: this.termConfig.rows,
         cols: this.termConfig.cols
       })
-      Terminal.loadAddon('attach')
+      // Terminal.loadAddon('attach')
       Terminal.loadAddon('fullscreen')
       Terminal.loadAddon('fit')
 
@@ -234,7 +235,8 @@
           title: this.$t('console.web_socket_disconnect')
         })
       }
-      term.attach(socket)
+      sshWebSocket.bindTerminal(term, socket, true, true)
+      // term.attach(socket)
     }
   }
 </script>
