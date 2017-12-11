@@ -53,6 +53,7 @@
 <script>
 import Footers from './footer.vue'
 import Utils from '@/libs/utils'
+import Config from '@/config/config'
 
 export default {
   components: {
@@ -112,14 +113,14 @@ export default {
           this.submitLoading = true
           let self = this
           Utils.axiosInstance.post(Utils.loadUrl('/signin'), {
-            // _xsrf: Utils.base64Decode(xsrf.split("|")[0]), //todo
+            // _xsrf: Utils.base64Decode(xsrf.split("|")[0]), // todo
             host: host,
             port: port,
             username: this.formValue.username,
             passwd: this.formValue.password
           }).then(function (response) {
             try {
-              if (response.data.has_error) {
+              if (!response.data || response.data.has_error) {
                 self.$Loading.error()
                 switch (response.data.message) {
                   case 0:
@@ -129,15 +130,21 @@ export default {
                     self.$Message.error(self.$t('signin.form_error_passport'))
                     break
                   case 2:
-                    self.$Message.error(self.$t('signin.form_error_test'))
+                    self.$Message.error(self.$t('signin.form_error_ssh_login'))
                     break
                 }
               } else {
-                self.$Loading.finish()
-                self.$Message.success(self.$t('signin.signin_success'))
-                window.localStorage.setItem('user.host', self.formValue.fullHost)
-                window.localStorage.setItem('user.username', self.formValue.username)
-                self.$router.push({name: 'console'})
+                if (!response.data.addition) {
+                  self.$Loading.error()
+                  self.$Message.error(self.$t('signin.form_error_remote_server'))
+                } else {
+                  self.$Loading.finish()
+                  self.$Message.success(self.$t('signin.signin_success'))
+                  localStorage.setItem('user.host', self.formValue.fullHost)
+                  localStorage.setItem('user.username', self.formValue.username)
+                  sessionStorage.setItem(Config.jwt.tokenName, response.data.addition)
+                  self.$router.push({name: 'console'})
+                }
               }
             } catch (e) {
               self.$Loading.error()

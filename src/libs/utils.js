@@ -8,8 +8,8 @@ util.title = function (title) {
 }
 
 util.loadUrl = function (url) {
-  if (config.env !== 'development' && window.location.host !== util.config.Domain) {
-    return url + util.config.vpnParame
+  if (config.env !== 'development' && window.location.host !== config.net.Domain) {
+    return url + config.net.vpnParame
   } else {
     return url
   }
