@@ -30,8 +30,7 @@ sshWebSocket.bindTerminal = function (term, websocket, bidirectional, bufferedTi
 
   // send heartbeat package to avoid closing webSocket connection in some proxy environmental such as nginx.
   let heartBeatTimer = setInterval(function () {
-    console.log('ok')
-    websocket.send(JSON.stringify({type: 'message', data: ''}))
+    websocket.send(JSON.stringify({type: 'heartbeat', data: ''}))
   }, 20 * 1000)
 
   websocket.addEventListener('close', function () {

@@ -13,6 +13,7 @@ module.exports = {
       'iview': 'window.iview',
       // 'axios': 'window.axios',
       // 'js-cookie': 'window.js-cookie',
+      // 'js-base64': 'window.js-base64'
       // 'xterm': 'window.xterm'
     },
   },
