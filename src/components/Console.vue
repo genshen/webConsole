@@ -230,8 +230,8 @@
 
       let _t = sessionStorage.getItem(Config.jwt.tokenName)
       if (_t) {
-        let socket = new WebSocket('ws://' + Config.net.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
-          '&' + Config.jwt.tokenName + '=' + _t)
+        let socket = new WebSocket(Util.loadUrl('/ws/ssh', 'cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
+          '&' + Config.jwt.tokenName + '=' + _t, true))
         socket.onclose = () => {
           term.setOption('cursorBlink', false)
           sessionStorage.removeItem(Config.jwt.tokenName)

@@ -7,12 +7,19 @@ util.title = function (title) {
   window.document.title = title
 }
 
-util.loadUrl = function (url) {
-  if (config.env !== 'development' && window.location.host !== config.net.Domain) {
-    return url + config.net.vpnParame
+util.loadUrl = function (url, params, websocket) {
+  let u
+  if (config.env !== 'development' && window.location.host !== config.net.Domain) { // vpn, use ssl.
+    let protocol = websocket ? 'wss://' : 'https://'
+    u = protocol + 'n.ustb.edu.cn' + url + config.net.vpnParame // todo
   } else {
-    return url
+    let protocol = config.ssl ? (websocket ? 'wss://' : 'https://') : (websocket ? 'ws://' : 'http://')
+    u = protocol + config.net.Domain + url
   }
+  if (params) {
+    return u + '?' + params
+  }
+  return u
 }
 
 // const ajaxUrl = config.env === 'development' ?
