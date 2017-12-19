@@ -4,18 +4,15 @@
     height: 100%;
     text-align: center;
 }
-
 .header {
     height: 60px;
 }
-
 .toolsbar {
     position: absolute;
     right: 80px;
     top: 160px;
     z-index: 10;
 }
-
 .toolsbar_exit_fullscreen {
     position: absolute;
     right: 80px;
@@ -46,7 +43,6 @@
     padding-left: 6px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
 }
-
 .layout-nav-header i {
     color: #fff;
 }
@@ -60,9 +56,6 @@
     padding-right: 36px;
     text-align: right;
 }
-</style>
-<style>
-
 </style>
 <template>
     <div class="console" @keyup.esc="exitFullscreenMode">
@@ -112,7 +105,7 @@
             </p>
             <div>
                 <span v-html="$t('console.modal_upload_hint')"></span>
-                <Upload multiple type="drag" :action="uploadFile.action">
+                <Upload multiple type="drag" :headers="httpAuthHeader" :action="uploadFile.action">
                     <div style="padding: 20px 0">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>{{$t("console.click_or_drag_to_upload")}}</p>
@@ -165,6 +158,12 @@
           model: false,
           action: Util.loadUrl('/ssh/uploadfile')
         }
+      }
+    },
+    computed: {
+      httpAuthHeader: function () {
+        let token = sessionStorage.getItem(Config.jwt.tokenName)
+        return {'Authorization': 'Bearer ' + token}
       }
     },
     methods: {

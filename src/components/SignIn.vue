@@ -29,7 +29,7 @@
           </Input>
         </Form-item>
         <Form-item prop="password">
-          <Input type="password" v-model="formValue.password" :placeholder="$t('signin.form_passwd_ph')">
+          <Input type="password" v-model="formValue.password" :placeholder="$t('signin.form_passwd_ph')" @on-enter="handleSubmit('formValue')">
             <Icon type="ios-locked" slot="prepend"></Icon>
           </Input>
         </Form-item>
@@ -107,8 +107,6 @@ export default {
           if (hostList.length === 2) {
             port = parseInt(hostList[1])
           }
-          // let xsrf = Cookies.get('_xsrf')
-          // if (xsrf) {
           this.$Loading.start()
           this.submitLoading = true
           let self = this
