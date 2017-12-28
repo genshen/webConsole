@@ -146,7 +146,7 @@
   export default {
     data () {
       return {
-        connectionAlive: true,
+        connectionAlive: false,
         host: 'waiting connection',
         username: 'Loading',
         statusIsFullscreen: false,
@@ -229,8 +229,9 @@
 
       let _t = sessionStorage.getItem(Config.jwt.tokenName)
       if (_t) {
-        let socket = new WebSocket('ws://' + Config.net.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
+        let socket = new WebSocket(sshWebSocket.Protocol + Config.net.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
           '&' + Config.jwt.tokenName + '=' + _t)
+        this.connectionAlive = true
         socket.onclose = () => {
           term.setOption('cursorBlink', false)
           sessionStorage.removeItem(Config.jwt.tokenName)

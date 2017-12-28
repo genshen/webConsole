@@ -1,6 +1,9 @@
 import {Base64} from 'js-base64'
+import Config from '@/config/config'
 
 const sshWebSocket = {}
+sshWebSocket.Protocol = (Config.env !== 'development' && location.protocol === 'https:') ? 'wss://' : 'ws://'
+
 sshWebSocket.bindTerminal = function (term, websocket, bidirectional, bufferedTime) {
   term.socket = websocket
 
