@@ -15,39 +15,40 @@
 <template>
   <div class="signin footer-container">
     <Row class="pre-footer-content" type="flex" justify="center" align="middle">
-      <Col :xs="22" :sm="12" :md="8" :lg="6">
-      <h1> {{ $t('signin.form_title') }}</h1>
-      <Form ref="formValue" :model="formValue" :rules="formRule">
-        <Form-item prop="fullHost">
-          <Input type="text" v-model="formValue.fullHost" :placeholder="$t('signin.form_fullhost_ph')">
-            <span slot="prepend">{{ $t('signin.form_fullhost_prepend') }}</span>
-          </Input>
-        </Form-item>
-        <Form-item prop="username">
-          <Input type="text" v-model="formValue.username" :placeholder="$t('signin.form_username_ph')">
-            <Icon type="ios-person" slot="prepend"></Icon>
-          </Input>
-        </Form-item>
-        <Form-item prop="password">
-          <Input type="password" v-model="formValue.password" :placeholder="$t('signin.form_passwd_ph')" @on-enter="handleSubmit('formValue')">
+      <i-col :xs="22" :sm="12" :md="8" :lg="6">
+        <h1> {{ $t('signin.form_title') }}</h1>
+        <Form ref="formValue" :model="formValue" :rules="formRule">
+          <Form-item prop="fullHost">
+            <i-input type="text" v-model="formValue.fullHost" :placeholder="$t('signin.form_fullhost_ph')">
+              <span slot="prepend">{{ $t('signin.form_fullhost_prepend') }}</span>
+            </i-input>
+          </Form-item>
+          <Form-item prop="username">
+            <i-input type="text" v-model="formValue.username" :placeholder="$t('signin.form_username_ph')">
+             <Icon type="ios-person" slot="prepend"></Icon>
+            </i-input>
+          </Form-item>
+          <Form-item prop="password">
+            <i-input type="password" v-model="formValue.password" :placeholder="$t('signin.form_passwd_ph')"
+                   @on-enter="handleSubmit('formValue')">
             <Icon type="ios-locked" slot="prepend"></Icon>
-          </Input>
-        </Form-item>
-        <Form-item>
-          <Button type="success" :loading="submitLoading" @click="handleSubmit('formValue')" long>
-            <template v-if="!submitLoading">
-              <Icon type="paper-airplane"></Icon>&emsp;{{ $t("signin.form_submit_btn") }}
-            </template>
-            <template v-else>
-              {{ $t("signin.form_submit_btn_loading") }}
-            </template>
-          </Button>
-        </Form-item>
-      </Form>
-      </Col>
+            </i-input>
+          </Form-item>
+          <Form-item>
+            <Button type="success" :loading="submitLoading" @click="handleSubmit('formValue')" long>
+              <template v-if="!submitLoading">
+                <Icon type="paper-airplane"></Icon>&emsp;{{ $t("signin.form_submit_btn") }}
+              </template>
+              <template v-else>
+                {{ $t("signin.form_submit_btn_loading") }}
+              </template>
+            </Button>
+          </Form-item>
+        </Form>
+      </i-col>
     </Row>
     <Footers></Footers>
-    </div>
+  </div>
 </template>
 
 <script>

@@ -48,17 +48,9 @@ module.exports = {
         options: vueLoaderConfig
       },
       {
-        /*
-        * ignore waring of  WARNING in ./node_modules/_xterm@2.9.2@xterm/lib/addons/search/search.js.map
-        * Module parse failed: Unexpected token (1:10)
-        * You may need an appropriate loader to handle this file type.
-        */
-        test: /node_modules.+xterm.+\.map$/,
-        loader: 'ignore-loader'
-      },
-      {
-        test: /\.ts$/,
-        loader: 'ts-loader'
+        test: /\.js$/,
+        loader: 'babel-loader',
+        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

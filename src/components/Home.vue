@@ -23,38 +23,35 @@
 </style>
 
 <template>
-    <div class="index footer-container">
-        <div class="pre-footer-content">
-            <div class="main-content">
-                <Row type="flex" justify="center" align="middle">
-                    <Col span="24">
-                    <h1>
-                        <img src="../assets/ssh.png">
-                    </h1>
-                    <h2>
-                        <p>{{$t('index.welcome')}}!</p><br>
-                        <Button @click="toSignIn" type="primary">{{$t('index.goto_signin')}}</Button>
-                    </h2>
-                    </Col>
-                </Row>
-
-            </div>
-        </div>
-        <FooterBar></FooterBar>
+  <div class="index footer-container">
+    <div class="pre-footer-content">
+      <div class="main-content">
+        <Row type="flex" justify="center" align="middle">
+          <i-col span="24">
+            <h1><img src="../assets/ssh.png"></h1>
+            <h2>
+              <p>{{$t('index.welcome')}}!</p><br>
+              <Button @click="toSignIn" type="primary">{{$t('index.goto_signin')}}</Button>
+            </h2>
+          </i-col>
+        </Row>
+      </div>
     </div>
+    <FooterBar></FooterBar>
+  </div>
 </template>
 
 <script>
-  import FooterBar from './footer.vue'
+import FooterBar from './footer.vue'
 
-  export default {
-    components: {
-      FooterBar
-    },
-    methods: {
-      toSignIn () {
-        this.$router.push({name: 'signin'})
-      }
+export default {
+  components: {
+    FooterBar
+  },
+  methods: {
+    toSignIn () {
+      this.$router.push({name: 'signin'})
     }
   }
+}
 </script>

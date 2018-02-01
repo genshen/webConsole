@@ -1,4 +1,4 @@
-# sshwebconsole
+# sshWebConsole
 
 > A web terminal/console for connecting to linux via ssh in web browser
 
