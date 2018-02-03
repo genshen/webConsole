@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import Footers from './footer.vue'
+import Footers from './Footer.vue'
 import Utils from '@/libs/utils'
 import Config from '@/config/config'
 

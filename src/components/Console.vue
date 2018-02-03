@@ -60,6 +60,10 @@
     padding-right: 36px;
     text-align: right;
   }
+
+  .file-transfer-sub_title{
+    font-weight: normal;
+  }
 </style>
 <template>
   <div class="console" @keyup.esc="exitFullscreenMode">
@@ -102,22 +106,15 @@
         </Row>
       </Menu>
     </div>
-    <Modal v-model="uploadFile.model" :closable="false" :mask-closable="false">
+    <Modal v-model="fileTransferModal" :closable="false" :mask-closable="false" :scrollable="true"> <!--todo cancel closable.-->
       <p slot="header">
-        <Icon type="upload"></Icon>
-        <span>{{$t("console.modal_upload_title")}}</span>
+        <Icon type="arrow-swap"></Icon>
+        <span>{{$t("console.modal_file_transfer_title")}}</span>
+        <span class="file-transfer-sub_title">(<a>sftp://{{username}}@{{host}}</a>)</span>
       </p>
-      <div>
-        <span v-html="$t('console.modal_upload_hint')"></span>
-        <Upload multiple type="drag" :headers="httpAuthHeader" :action="uploadFile.action">
-          <div style="padding: 20px 0">
-            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-            <p>{{$t("console.click_or_drag_to_upload")}}</p>
-          </div>
-        </Upload>
-      </div>
+      <FileTree :sshActive="connectionAlive"></FileTree> <!--files are listed here-->
       <div slot="footer">
-        <Button type="primary" @click="uploadFileOnOk" size="large">{{$t("console.modal_upload_ok_btn")}}</Button>
+        <Button type="primary" @click="fileTransferModalOnOk" size="large">{{$t("console.modal_file_transfer_ok_btn")}}</Button>
       </div>
     </Modal>
     <div class="toolsbar">
@@ -125,8 +122,8 @@
       <Button-group vertical>
         <Button type="primary" size="large" @click="toolsBarRefresh" :title="$t('console.toolsbar_refresh')"
                 icon="android-refresh"></Button>
-        <Button type="primary" size="large" @click="toolsBarUploadFiles" :title="$t('console.toolsbar_upload_files')"
-                icon="android-upload"></Button>
+        <Button type="primary" size="large" @click="toolsBarFileTransfer" :title="$t('console.toolsbar_file_transfer')"
+                icon="arrow-swap"></Button>
         <Button type="primary" size="large" @click="toolsBarFullscreen" :title="$t('console.toolsbar_fullscreen')"
                 icon="android-expand"></Button>
         <Button type="primary" size="large" @click="toolsBarSettings" :title="$t('console.toolsbar_settings')"
@@ -142,6 +139,7 @@
 </template>
 <script>
 import { Terminal } from 'xterm'
+import FileTree from './filetree/FileTree'
 import Util from '@/libs/utils'
 import Config from '@/config/config'
 import sshWebSocket from '@/libs/sshWebSocket'
@@ -155,6 +153,9 @@ import 'xterm/lib/addons/fullscreen/fullscreen.css'
 let term = null
 
 export default {
+  components: {
+    FileTree
+  },
   data () {
     return {
       connectionAlive: false,
@@ -165,10 +166,7 @@ export default {
         cols: 120,
         rows: 28
       },
-      uploadFile: {
-        model: false,
-        action: Util.loadUrl('/ssh/uploadfile')
-      }
+      fileTransferModal: false
     }
   },
   computed: {
@@ -189,15 +187,15 @@ export default {
     toolsBarRefresh () {
       this.$Message.warning('under developing') // todo
     },
-    toolsBarUploadFiles () {
-      this.uploadFile.model = true
+    toolsBarFileTransfer () {
+      this.fileTransferModal = true
     },
     toolsBarFullscreen () {
       this.$Notice.open({
         title: this.$t('console.ecs_to_exit_fullscreen')
       })
       this.statusIsFullscreen = true
-      term.toggleFullscreen(true)
+      term.toggleFullScreen(true)
       return false
     },
     toolsBarSettings () {
@@ -205,10 +203,10 @@ export default {
     },
     exitFullscreenMode () {
       this.statusIsFullscreen = false
-      term.toggleFullscreen(false)
+      term.toggleFullScreen(false)
     },
-    uploadFileOnOk () {
-      this.uploadFile.model = false
+    fileTransferModalOnOk () {
+      this.fileTransferModal = false
     }
   },
   created () {
@@ -222,14 +220,15 @@ export default {
   },
   mounted () {
     // let self = this
+    Terminal.applyAddon(fullscreen)
+    Terminal.applyAddon(fit)
     term = new Terminal({
       cursorBlink: true,
+      bellStyle: 'sound',
       theme: {
         background: '#000'
       }
     })
-    Terminal.applyAddon(fullscreen)
-    Terminal.applyAddon(fit)
 
     term.open(document.getElementById('terminal'))
     term.on('resize', (size) => {
@@ -240,9 +239,12 @@ export default {
 
     let _t = sessionStorage.getItem(Config.jwt.tokenName)
     if (_t) {
-      let socket = new WebSocket(sshWebSocket.Protocol + Config.net.Domain + '/ws/ssh?cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
-        '&' + Config.jwt.tokenName + '=' + _t)
+      const socket = new WebSocket(Util.loadWebSocketUrl('/ws/ssh', 'cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
+        '&' + Config.jwt.tokenName + '=' + _t))
+      // console.log(Util.loadWebSocketUrl(Config.net.webSocketProtocol, '/ws/ssh', 'cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
+      //   '&' + Config.jwt.tokenName + '=' + _t))
       this.connectionAlive = true
+
       socket.onclose = () => {
         term.setOption('cursorBlink', false)
         sessionStorage.removeItem(Config.jwt.tokenName)

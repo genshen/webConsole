@@ -10,13 +10,22 @@ export default {
       goto_signin: '去往登录页面'
     },
     console: {
+      file_transfer: {
+        ssh_not_active: 'ssh未连接,请先连接ssh',
+        connect_to_sftp_server: '新建SFTP连接',
+        modal_upload_hint: '文件将上传至 "<b>~/tmp</b>" 目录下',
+        explore_files: '<b>浏览文件</b>:',
+        error_while_ls: '获取目录<i>{dir}</i>信息错误',
+        error_download_file: '下载文件 <i>{name}</i> 出错',
+        empty_dir: '空目录'
+      },
       nav_doc: '帮助文档',
       nav_hpcer: 'HPCer',
       nav_project: '项目',
       nav_about: '关于',
       nav_user_exit: '退出',
       toolsbar_refresh: '刷新',
-      toolsbar_upload_files: '上传文件',
+      toolsbar_file_transfer: '文件传输',
       toolsbar_fullscreen: '全屏',
       toolsbar_settings: '设置',
       toolsbar_exit_fullscreen: '退出全屏',
@@ -24,10 +33,8 @@ export default {
       web_socket_expire: '当前登录状态已失效,请重新登录',
       relogin: '重新登录',
       ecs_to_exit_fullscreen: '按 <b>ESC</b> 键以退出全屏模式',
-      modal_upload_title: '上传文件',
-      modal_upload_hint: '文件将上传至 "<b>~/tmp</b>" 目录下',
-      click_or_drag_to_upload: '点击或将文件拖拽到这里上传',
-      modal_upload_ok_btn: '完成'
+      modal_file_transfer_title: '文件传输',
+      modal_file_transfer_ok_btn: '完成'
     },
     signin: {
       form_title: '登录 SSH Web Console',
@@ -59,13 +66,22 @@ export default {
       goto_signin: 'Go to Sign in Page'
     },
     console: {
+      file_transfer: {
+        ssh_not_active: 'ssh is not active, please login in ssh first.',
+        connect_to_sftp_server: 'Start a new sftp connection',
+        modal_upload_hint: 'files will be uploaded to directory "<b>~/tmp</b>" .',
+        explore_files: '<b>Explore Files</b>:',
+        error_while_ls: 'error happened while list directory <i>{dir}</i>',
+        error_download_file: 'error happened while download file <i>{name}</i>',
+        empty_dir: 'Empty Directory'
+      },
       nav_doc: 'Docs',
       nav_hpcer: 'HPCer',
       nav_project: 'Projects',
       nav_about: 'About',
       nav_user_exit: 'Exit',
       toolsbar_refresh: 'refresh',
-      toolsbar_upload_files: 'upload files',
+      toolsbar_file_transfer: 'file transfer',
       toolsbar_fullscreen: 'fullscreen',
       toolsbar_settings: 'settings',
       toolsbar_exit_fullscreen: 'exit fullscreen',
@@ -73,10 +89,8 @@ export default {
       web_socket_expire: 'Your session has been expired,please relogin.',
       relogin: 'Relogin',
       ecs_to_exit_fullscreen: 'To exit fullscreen Mode,please press <b>ESC</b> key',
-      modal_upload_title: 'Upload Files',
-      modal_upload_hint: 'files will be uploaded to directory "<b>~/tmp</b>" .',
-      click_or_drag_to_upload: 'Click or drag files here to upload',
-      modal_upload_ok_btn: 'Finish'
+      modal_file_transfer_title: 'File Transfer',
+      modal_file_transfer_ok_btn: 'Finish'
     },
     signin: {
       form_title: 'Sign In SSH Web Console',

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import FooterBar from './footer.vue'
+import FooterBar from './Footer.vue'
 
 export default {
   components: {
