@@ -142,7 +142,7 @@ import { Terminal } from 'xterm'
 import FileTree from './filetree/FileTree'
 import Util from '@/libs/utils'
 import Config from '@/config/config'
-import sshWebSocket from '@/libs/sshWebSocket'
+import sshWebSocket from '@/libs/sshwebsocket'
 
 // import 'xterm/dist/xterm.css';  //xterm.css D:\workspace\javascript\frontend\sshwebconsole\node_modules\
 import * as fit from 'xterm/lib/addons/fit/fit'

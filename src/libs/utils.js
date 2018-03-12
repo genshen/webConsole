@@ -9,28 +9,16 @@ util.title = function (title) {
 }
 
 util.loadUrl = function (url, params) {
-  const host = 'https://vpn3.ustb.edu.cn'
-  return params ? host + url + '?' + params + config.net.vpnParame
-    : host + url + config.net.vpnParame
-  // if (config.env !== 'development' && window.location.host !== config.net.Domain) { // todo params
-  //   url += config.net.vpnParame
-  // }g
-  // return params ? url + '?' + params : url
+  url = config.net.protocol + config.net.host + url + config.net.midParams
+  return params ? url + '?' + params : url
 }
 
 util.loadWebSocketUrl = function (url, params) {
   const protocol = config.net.webSocketProtocol
-  const host = 'vpn3.ustb.edu.cn'
-  // return protocol + url
-  //   console.log(location.host, window.location.host, config.net.Domain)
-  //  if (config.env !== 'development' && window.location.host !== config.net.Domain) { // todo params
-  // return protocol + host + url + ',DanaInfo=console.hpc.gensh.me,SSL?' + params // todo
-  return params ? protocol + host + url + '?' + params + config.net.vpnParame
-    : protocol + host + url + config.net.vpnParame
-  // } else {
-  //   //   return protocol + window.location.host + this.loadUrl(url, params + '&ok=k')
-  // }
+  url = protocol + config.net.host + url + config.net.midParams
+  return params ? url + '?' + params : url
 }
+
 // const ajaxUrl = config.env === 'development' ?
 //     'http://127.0.0.1:80' :
 //     config.env === 'production' ?
