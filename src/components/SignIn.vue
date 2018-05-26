@@ -55,6 +55,7 @@
 import Footers from './Footer.vue'
 import Utils from '@/libs/utils'
 import Config from '@/config/config'
+import apiRouters from '@/config/api_routers'
 
 export default {
   components: {
@@ -111,7 +112,7 @@ export default {
           this.$Loading.start()
           this.submitLoading = true
           let self = this
-          Utils.axiosInstance.post(Utils.loadUrl('/signin'), {
+          Utils.axiosInstance.post(Utils.loadUrl(apiRouters.router.sign_in), {
             // _xsrf: Utils.base64Decode(xsrf.split("|")[0]), // todo
             host: host,
             port: port,

@@ -143,6 +143,8 @@ import FileTree from './filetree/FileTree'
 import Util from '@/libs/utils'
 import Config from '@/config/config'
 import sshWebSocket from '@/libs/sshwebsocket'
+import stringFormat from '@/libs/string_format'
+import apiRouters from '@/config/api_routers'
 
 // import 'xterm/dist/xterm.css';  //xterm.css D:\workspace\javascript\frontend\sshwebconsole\node_modules\
 import * as fit from 'xterm/lib/addons/fit/fit'
@@ -239,8 +241,8 @@ export default {
 
     let _t = sessionStorage.getItem(Config.jwt.tokenName)
     if (_t) {
-      const socket = new WebSocket(Util.loadWebSocketUrl('/ws/ssh', 'cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
-        '&' + Config.jwt.tokenName + '=' + _t))
+      const socket = new WebSocket(Util.loadWebSocketUrl(apiRouters.router.ws_ssh,
+        stringFormat.format(apiRouters.params.ws_ssh, this.termConfig.cols, this.termConfig.rows, _t)))
       // console.log(Util.loadWebSocketUrl(Config.net.webSocketProtocol, '/ws/ssh', 'cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
       //   '&' + Config.jwt.tokenName + '=' + _t))
       this.connectionAlive = true

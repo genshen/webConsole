@@ -21,12 +21,17 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/signin': {
+      '/api': {
         target: 'http://127.0.0.1:2222',
         changeOrigin: true,
-        pathRewrite: {
-          '^/signin': '/signin'
-        }
+        // pathRewrite: {
+        //   '^/signin': '/signin'
+        // }
+      },
+      '/ws': { // web socket
+        target: 'http://127.0.0.1:2222',
+        changeOrigin: true,
+        ws: true,
       },
     },
 

@@ -29,9 +29,8 @@
 <script>
 import Config from '@/config/config'
 import Utils from '@/libs/utils'
-
-const CID = 'cid'
-const PATH = 'path'
+import stringFormat from '@/libs/string_format'
+import apiRouters from '@/config/api_routers'
 
 export default {
   name: 'file-tree',
@@ -57,7 +56,7 @@ export default {
     sftp_upload_action () {
       const _t = sessionStorage.getItem(Config.jwt.tokenName)
       if (_t) {
-        return Utils.loadUrl('/sftp/upload', Config.jwt.tokenName + '=' + _t + '&' + CID + '=' + this.sftpConId)
+        return Utils.loadUrl(apiRouters.router.sftp_upload, stringFormat.format(apiRouters.params.sftp_upload, _t, this.sftpConId))
       }
       return ''
     }
@@ -118,8 +117,8 @@ export default {
       const path = item.path
       const _t = sessionStorage.getItem(Config.jwt.tokenName)
       if (_t) {
-        Utils.axiosInstance.get(Utils.loadUrl('/sftp/ls', Config.jwt.tokenName + '=' + _t +
-          '&' + CID + '=' + this.sftpConId + '&' + PATH + '=' + path), {
+        Utils.axiosInstance.get(Utils.loadUrl(apiRouters.router.sftp_ls,
+          stringFormat.format(apiRouters.params.sftp_ls, _t, this.sftpConId, path)), {
         }).then((response) => {
           try {
             if (!response.data || response.data.has_error) {
@@ -156,8 +155,8 @@ export default {
         // const filename = item.name
         const _t = sessionStorage.getItem(Config.jwt.tokenName)
         if (_t) {
-          window.open(Utils.loadUrl('/sftp/dl', Config.jwt.tokenName + '=' + _t +
-            '&' + CID + '=' + this.sftpConId + '&' + PATH + '=' + path), '_self', false)
+          window.open(Utils.loadUrl(apiRouters.router.sftp_dl,
+            stringFormat.format(apiRouters.params.sftp_dl, _t, this.sftpConId, path)), '_self', false)
         }
       }
     },
@@ -165,7 +164,8 @@ export default {
       let _t = sessionStorage.getItem(Config.jwt.tokenName)
       if (_t) {
         this.sftpConnectLoading = true
-        const socket = new WebSocket(Utils.loadWebSocketUrl('/ws/sftp', Config.jwt.tokenName + '=' + _t))
+        const socket = new WebSocket(Utils.loadWebSocketUrl(apiRouters.router.ws_sftp,
+          stringFormat.format(apiRouters.params.ws_sftp, _t)))
         this.sftpSocket = socket
         this.sftpConnectLoading = false
         this.sftpActive = true
@@ -191,7 +191,7 @@ export default {
     },
     handleWebSocketMessage (message) {
       switch (message.type) {
-        case CID:
+        case apiRouters.CID:
           this.sftpConId = message.data
           break
       }

@@ -21,7 +21,7 @@ config.net.isVPN = (function () {
   return urlParams.has('vpn')
 })()
 
-// get target host when communicationg with banckend api.
+// get target host when communicating with backend api.
 config.net.host = (function () {
   if (config.net.isVPN) {
     return config.net.vpnHost
