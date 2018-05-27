@@ -19,7 +19,7 @@
     "vue": "^2.5.2",
     "vue-i18n": "^7.4.1",
     "vue-router": "^3.0.1",
-    "xterm": "^3.2.0"
+    "xterm": "^3.4.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.2.6",

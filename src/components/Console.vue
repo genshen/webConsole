@@ -20,13 +20,13 @@
     position: absolute;
     right: 80px;
     top: 90px;
-    z-index: 256;
+    z-index: 902;
   }
 
   #terminal {
     font-size: 14px;
     height: calc(100% - 60px);
-    background: #000;
+    background: #1b212f; /*todo color with terminal background*/
   }
 
   .layout-logo {
@@ -63,6 +63,13 @@
 
   .file-transfer-sub_title{
     font-weight: normal;
+  }
+</style>
+<style>
+  /* the value of z-index of iview.notice is 1010
+  and, the value of z-index of top Menu is 900 */
+  .xterm.fullscreen{
+    z-index:901;
   }
 </style>
 <template>
@@ -145,6 +152,7 @@ import Config from '@/config/config'
 import sshWebSocket from '@/libs/sshwebsocket'
 import stringFormat from '@/libs/string_format'
 import apiRouters from '@/config/api_routers'
+import theme from '@/libs/terminal_theme'
 
 // import 'xterm/dist/xterm.css';  //xterm.css D:\workspace\javascript\frontend\sshwebconsole\node_modules\
 import * as fit from 'xterm/lib/addons/fit/fit'
@@ -227,9 +235,7 @@ export default {
     term = new Terminal({
       cursorBlink: true,
       bellStyle: 'sound',
-      theme: {
-        background: '#000'
-      }
+      theme: theme.default_theme
     })
 
     term.open(document.getElementById('terminal'))
