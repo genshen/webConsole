@@ -1,16 +1,33 @@
+<style scoped>
+  .files-tree-list{
+    height: 300px; /*the same as the height in class directory*/
+  }
+  .files-tree-list .files-tree{
+    height: 280px;
+    overflow-y: auto;
+  }
+  .directories {
+    height: 300px;
+  }
+</style>
 <template>
   <div>
     <div v-if="sshActive">
       <div v-if="sftpActive" style="position:relative">
-        <span v-html="$t('console.file_transfer.modal_upload_hint')"></span>
-        <Upload multiple type="drag" :action="sftp_upload_action">
-          <div style="padding: 20px 0">
-            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-            <p>Click or drag files here to upload</p>
-          </div>
-         </Upload>
-        <span v-html="$t('console.file_transfer.explore_files')"></span>
-        <Tree :data="wheel" :load-data="ls" :render="renderFileTree" empty-text="Nothing in this directory"></Tree>
+        <Row>
+          <i-col span="6">
+            <div class="files-tree-list">
+              <span v-html="$t('console.file_transfer.explore_files')"></span>
+              <Tree class='files-tree' :data="wheel" :load-data="ls" :render="renderFileTree"
+                    @on-select-change="onTreeItemSelectChange" empty-text="Nothing in this directory"></Tree>
+            </div>
+          </i-col>
+          <i-col span="18">
+            <div class="directories">
+              <FileUpload :cid="sftpConId" ref="fileGridViewer"></FileUpload>
+            </div>
+          </i-col>
+        </Row>
         <!--<Spin size="large" fix v-if="fileItemsLoading"></Spin>-->
       </div>
       <div v-else>
@@ -31,6 +48,9 @@ import Config from '@/config/config'
 import Utils from '@/libs/utils'
 import stringFormat from '@/libs/string_format'
 import apiRouters from '@/config/api_routers'
+import FileUpload from '@/components/filetree/FileUpload'
+
+const HOME = 'HOME'
 
 export default {
   name: 'file-tree',
@@ -43,7 +63,7 @@ export default {
       wheel:
         [
           {
-            title: 'HOME',
+            title: HOME,
             is_dir: true,
             path: '',
             loading: false,
@@ -52,14 +72,8 @@ export default {
         ]
     }
   },
-  computed: {
-    sftp_upload_action () {
-      const _t = sessionStorage.getItem(Config.jwt.tokenName)
-      if (_t) {
-        return Utils.loadUrl(apiRouters.router.sftp_upload, stringFormat.format(apiRouters.params.sftp_upload, _t, this.sftpConId))
-      }
-      return ''
-    }
+  components: {
+    FileUpload
   },
   props: {
     sshActive: {
@@ -68,7 +82,7 @@ export default {
     }
   },
   watch: {
-    sshActive: function () {
+    sshActive () {
       if (!this.sshActive && this.sftpSocket) {
         this.sftpSocket.close() // todo
       }
@@ -77,9 +91,9 @@ export default {
   methods: {
     renderFileTree (h, { root, node, data }) {
       const _this = this
-      let icon = 'ios-paper-outline'
-      if (data.is_dir) {
-        icon = 'android-folder'
+      let icon = 'android-folder'
+      if (!data.is_dir) {
+        icon = 'ios-filing-outline'
       }
       return h('span', {
         style: {
@@ -118,7 +132,7 @@ export default {
       const _t = sessionStorage.getItem(Config.jwt.tokenName)
       if (_t) {
         Utils.axiosInstance.get(Utils.loadUrl(apiRouters.router.sftp_ls,
-          stringFormat.format(apiRouters.params.sftp_ls, _t, this.sftpConId, path)), {
+          stringFormat.format(apiRouters.params.sftp_ls, _t, this.sftpConId, true, path)), {
         }).then((response) => {
           try {
             if (!response.data || response.data.has_error) {
@@ -131,13 +145,12 @@ export default {
               messages.forEach((ele) => {
                 if (ele.is_dir) {
                   children.push({title: ele.name, is_dir: ele.is_dir, path: ele.path, loading: false, children: []})
-                } else {
-                  children.push({title: ele.name, is_dir: ele.is_dir, path: ele.path})
                 }
               })
               // todo empty-text
               if (children.length === 0) {
-                this.$Message.warning(this.$t('console.file_transfer.empty_dir'))
+                // remove expand icon.
+                children.push({title: '[empty]', is_dir: false, path: ''})
               }
               callback(children) // only callback here todo handle error for loading.
             }
@@ -150,15 +163,13 @@ export default {
       }
     },
     onTreeItemSelected (item) {
-      if (!item.is_dir) {
+      if (item.is_dir) { // todo
         const path = item.path
-        // const filename = item.name
-        const _t = sessionStorage.getItem(Config.jwt.tokenName)
-        if (_t) {
-          window.open(Utils.loadUrl(apiRouters.router.sftp_dl,
-            stringFormat.format(apiRouters.params.sftp_dl, _t, this.sftpConId, path)), '_self', false)
-        }
+        this.$refs.fileGridViewer.onPath(path)
       }
+    },
+    onTreeItemSelectChange (item) {
+      // console.log('item changed') // todo use onTreeItemSelectChange, but may have bug: https://github.com/iview/iview/issues/2313
     },
     openSftpConnection () {
       let _t = sessionStorage.getItem(Config.jwt.tokenName)

@@ -13,8 +13,8 @@ const apiRouters = {
     ws_ssh: 'cols={{0}}&rows={{1}}&' + config.jwt.tokenName + '={{2}}',
     ws_sftp: config.jwt.tokenName + '={{0}}',
     sftp_dl: config.jwt.tokenName + '={{0}}&cid={{1}}&path={{2}}',
-    sftp_ls: config.jwt.tokenName + '={{0}}&cid={{1}}&path={{2}}',
-    sftp_upload: config.jwt.tokenName + '={{0}}&cid={{1}}'
+    sftp_ls: config.jwt.tokenName + '={{0}}&cid={{1}}&dir_only={{2}}&path={{3}}',
+    sftp_upload: config.jwt.tokenName + '={{0}}&cid={{1}}&path={{2}}'
   },
   CID: 'cid'
 }

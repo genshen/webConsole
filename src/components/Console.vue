@@ -106,7 +106,7 @@
         </Row>
       </Menu>
     </div>
-    <Modal v-model="fileTransferModal" :closable="false" :mask-closable="false" :scrollable="true"> <!--todo cancel closable.-->
+    <Modal v-model="fileTransferModal" :width="720" :closable="false" :mask-closable="false" :scrollable="true"> <!--todo cancel closable.-->
       <p slot="header">
         <Icon type="arrow-swap"></Icon>
         <span>{{$t("console.modal_file_transfer_title")}}</span>

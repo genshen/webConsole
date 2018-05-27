@@ -17,7 +17,13 @@ export default {
         explore_files: '<b>浏览文件</b>:',
         error_while_ls: '获取目录<i>{dir}</i>信息错误',
         error_download_file: '下载文件 <i>{name}</i> 出错',
-        empty_dir: '空目录'
+        upload_btn: '上传',
+        empty_dir_or_no_sub_dir: '空目录或无子目录',
+        upload_status_pending: '正在处理',
+        upload_status_uploading: '正在上传 {percent}%',
+        upload_status_def: '上传',
+        upload_status_fail: '文件上传失败',
+        wait_for_unload_finish: '请等待当前上传文件结束'
       },
       nav_doc: '帮助文档',
       nav_hpcer: 'HPCer',
@@ -73,7 +79,13 @@ export default {
         explore_files: '<b>Explore Files</b>:',
         error_while_ls: 'error happened while list directory <i>{dir}</i>',
         error_download_file: 'error happened while download file <i>{name}</i>',
-        empty_dir: 'Empty Directory'
+        upload_btn: 'Upload',
+        empty_dir: 'Empty Directory or no Sub Directories',
+        upload_status_pending: 'pending',
+        upload_status_uploading: 'uploading {percent}%',
+        upload_status_def: 'Upload',
+        upload_status_fail: 'Upload Failed',
+        wait_for_unload_finish: 'Please wait for finishing uploading file(s)'
       },
       nav_doc: 'Docs',
       nav_hpcer: 'HPCer',
