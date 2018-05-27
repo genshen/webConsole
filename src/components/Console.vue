@@ -68,7 +68,7 @@
 <style>
   /* the value of z-index of iview.notice is 1010
   and, the value of z-index of top Menu is 900 */
-  .xterm.fullscreen{
+  #terminal .xterm.fullscreen{
     z-index:901;
   }
 </style>
