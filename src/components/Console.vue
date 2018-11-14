@@ -214,7 +214,7 @@ export default {
       statusIsFullscreen: false,
       termConfig: {
         cols: 120,
-        rows: 28
+        rows: 48
       },
       fileTransferModal: false
     };
