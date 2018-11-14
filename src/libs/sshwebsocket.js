@@ -1,45 +1,52 @@
-import {Base64} from 'js-base64'
+import { Base64 } from "js-base64";
 
-const sshWebSocket = {}
+const sshWebSocket = {};
 
-sshWebSocket.bindTerminal = function (term, websocket, bidirectional, bufferedTime) {
-  term.socket = websocket
+sshWebSocket.bindTerminal = function(
+  term,
+  websocket,
+  bidirectional,
+  bufferedTime
+) {
+  term.socket = websocket;
 
-  let messageBuffer = null
-  let handleWebSocketMessage = function (ev) {
+  let messageBuffer = null;
+  let handleWebSocketMessage = function(ev) {
     if (bufferedTime && bufferedTime > 0) {
       if (messageBuffer) {
-        messageBuffer += ev.data
+        messageBuffer += ev.data;
       } else {
-        messageBuffer = ev.data
-        setTimeout(function () {
-          term.write(messageBuffer)
-        }, bufferedTime)
+        messageBuffer = ev.data;
+        setTimeout(function() {
+          term.write(messageBuffer);
+        }, bufferedTime);
       }
     } else {
-      term.write(ev.data)
+      term.write(ev.data);
     }
-  }
-  let handleTerminalData = function (data) {
-    websocket.send(JSON.stringify({type: 'terminal', data: Base64.encode(data)}))
-  }
+  };
+  let handleTerminalData = function(data) {
+    websocket.send(
+      JSON.stringify({ type: "terminal", data: Base64.encode(data) })
+    );
+  };
 
-  websocket.onmessage = handleWebSocketMessage
+  websocket.onmessage = handleWebSocketMessage;
   if (bidirectional) {
-    term.on('data', handleTerminalData)
+    term.on("data", handleTerminalData);
   }
 
   // send heartbeat package to avoid closing webSocket connection in some proxy environmental such as nginx.
-  let heartBeatTimer = setInterval(function () {
-    websocket.send(JSON.stringify({type: 'heartbeat', data: ''}))
-  }, 20 * 1000)
+  let heartBeatTimer = setInterval(function() {
+    websocket.send(JSON.stringify({ type: "heartbeat", data: "" }));
+  }, 20 * 1000);
 
-  websocket.addEventListener('close', function () {
-    websocket.removeEventListener('message', handleWebSocketMessage)
-    term.off('data', handleTerminalData)
-    delete term.socket
-    clearInterval(heartBeatTimer)
-  })
-}
+  websocket.addEventListener("close", function() {
+    websocket.removeEventListener("message", handleWebSocketMessage);
+    term.off("data", handleTerminalData);
+    delete term.socket;
+    clearInterval(heartBeatTimer);
+  });
+};
 
-export default sshWebSocket
+export default sshWebSocket;
