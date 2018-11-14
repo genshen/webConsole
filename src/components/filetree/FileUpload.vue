@@ -137,7 +137,7 @@ export default {
       this.file_grid_list.current_path = path
     },
     onPath (path) { // when the path is changed // todo add cache
-      if (path === this.file_grid_list.current_path) {
+      if (path && path === this.file_grid_list.current_path) {
         return // if it is the same path.
       }
       if (this.file_uploading) { // if it is uploading.

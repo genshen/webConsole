@@ -1,53 +1,49 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import iView from 'iview'
-import Utils from '@/libs/utils'
+import Vue from "vue";
+import Router from "vue-router";
+import iView from "iview";
+import Utils from "@/libs/utils";
 
-import Home from '@/components/Home'
-import Console from '@/components/Console'
-import SignIn from '@/components/SignIn'
-
-Vue.use(Router)
+Vue.use(Router);
 
 const vueRouter = new Router({
-  mode: 'hash',
+  mode: "hash",
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
       meta: {
-        title: 'Home'
+        title: "Home"
       },
-      component: Home
+      component: () => import("@/components/Home")
     },
     {
-      path: '/console',
-      name: 'console',
+      path: "/console",
+      name: "console",
       meta: {
-        title: 'Console'
+        title: "Console"
       },
-      component: Console
+      component: () => import("@/components/Console")
     },
     {
-      path: '/signin',
-      name: 'signin',
+      path: "/signin",
+      name: "signin",
       meta: {
-        title: 'sign in'
+        title: "sign in"
       },
-      component: SignIn
+      component: () => import("@/components/SignIn")
     }
   ]
-})
+});
 
 vueRouter.beforeEach((to, from, next) => {
-  iView.LoadingBar.start()
-  Utils.title(to.meta.title)
-  next()
-})
+  iView.LoadingBar.start();
+  Utils.title(to.meta.title);
+  next();
+});
 
 vueRouter.afterEach(() => {
-  iView.LoadingBar.finish()
-  window.scrollTo(0, 0)
-})
+  iView.LoadingBar.finish();
+  window.scrollTo(0, 0);
+});
 
-export default vueRouter
+export default vueRouter;

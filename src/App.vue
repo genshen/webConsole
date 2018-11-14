@@ -1,20 +1,11 @@
-<style>
-  html,body{
-    height: 100%;
-  }
-  .layout {
-    height: 100%;
-  }
-</style>
-
 <template>
-  <div class="layout">
-    <router-view></router-view>
+  <div id="app">
+    <div class="layout"><router-view /></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app'
-}
+  name: "app"
+};
 </script>
