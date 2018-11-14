@@ -39,17 +39,17 @@
         <!-- <Spin size="large" fix v-if="fileItemsLoading"></Spin> -->
       </div>
       <div v-else>
-        <button
+        <i-button
           type="ghost"
           icon="android-add"
           :loading="sftpConnectLoading"
           @click="openSftpConnection"
         >
-          <span v-if="!sftpConnectLoading">{{
-            $t("console.file_transfer.connect_to_sftp_server")
-          }}</span>
+          <span v-if="!sftpConnectLoading">
+            {{ $t("console.file_transfer.connect_to_sftp_server") }}
+          </span>
           <span v-else>Loading...</span>
-        </button>
+        </i-button>
       </div>
     </div>
     <div v-else class="ssh-not-active">

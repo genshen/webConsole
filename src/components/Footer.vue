@@ -20,18 +20,18 @@
 <template>
   <footer>
     <div class="footer">
-      <router-link :to="{ name: 'home' }"
-        >&nbsp;{{ $t("global.home") }}&nbsp;</router-link
-      >
+      <router-link :to="{ name: 'home' }">
+        &nbsp;{{ $t("global.home") }}&nbsp;
+      </router-link>
       <span>|</span>
       <Icon size="18" type="social-github"></Icon>
-      <a href="https://github.com/genshen/sshWebConsole" target="_blank"
-        >&nbsp;Github&nbsp;</a
-      >
+      <a href="https://github.com/genshen/sshWebConsole" target="_blank">
+        &nbsp;Github&nbsp;
+      </a>
       <span>|</span>
-      <button @click="switchLang" type="ghost" size="small">
+      <i-button @click="switchLang" type="ghost" size="small">
         {{ $t("global.switch_lang") }}
-      </button>
+      </i-button>
     </div>
   </footer>
 </template>

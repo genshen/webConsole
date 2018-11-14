@@ -75,7 +75,7 @@
 <template>
   <div class="console" @keyup.esc="exitFullscreenMode">
     <div class="header">
-      <menu mode="horizontal" theme="dark" active-name="1">
+      <i-menu mode="horizontal" theme="dark" active-name="1">
         <Row>
           <i-col :xs="0" :sm="6"> <div class="layout-logo"></div> </i-col>
           <i-col :xs="8" :sm="0">
@@ -94,9 +94,9 @@
           </i-col>
           <i-col :xs="16" :sm="6">
             <div class="layout-nav-right">
-              <router-link v-if="!connectionAlive" :to="{ path: 'signin' }">{{
-                $t("console.relogin")
-              }}</router-link>
+              <router-link v-if="!connectionAlive" :to="{ path: 'signin' }">
+                {{ $t("console.relogin") }}
+              </router-link>
               <Dropdown v-else @on-click="handleDropdownMunu">
                 <a href="javascript:void(0)">
                   <Icon type="person"></Icon>&nbsp;{{ username }}
@@ -112,7 +112,7 @@
             </div>
           </i-col>
         </Row>
-      </menu>
+      </i-menu>
     </div>
     <Modal
       v-model="fileTransferModal"
@@ -125,17 +125,16 @@
       <p slot="header">
         <Icon type="arrow-swap"></Icon>
         <span>{{ $t("console.modal_file_transfer_title") }}</span>
-        <span class="file-transfer-sub_title"
-          >(<a>sftp://{{ username }}@{{ host }}</a
-          >)</span
-        >
+        <span class="file-transfer-sub_title">
+          ( <a>sftp://{{ username }}@{{ host }}</a> )
+        </span>
       </p>
       <FileTree :sshActive="connectionAlive"></FileTree>
       <!-- files are listed here -->
       <div slot="footer">
-        <button type="primary" @click="fileTransferModalOnOk" size="large">
+        <i-button type="primary" @click="fileTransferModalOnOk" size="large">
           {{ $t("console.modal_file_transfer_ok_btn") }}
-        </button>
+        </i-button>
       </div>
     </Modal>
     <div class="toolsbar">
@@ -143,44 +142,44 @@
         <Button type="primary" size="large" shape="circle" icon="wrench"></Button>
       -->
       <Button-group vertical>
-        <button
+        <i-button
           type="primary"
           size="large"
           @click="toolsBarRefresh"
           :title="$t('console.toolsbar_refresh')"
           icon="android-refresh"
-        ></button>
-        <button
+        ></i-button>
+        <i-button
           type="primary"
           size="large"
           @click="toolsBarFileTransfer"
           :title="$t('console.toolsbar_file_transfer')"
           icon="arrow-swap"
-        ></button>
-        <button
+        ></i-button>
+        <i-button
           type="primary"
           size="large"
           @click="toolsBarFullscreen"
           :title="$t('console.toolsbar_fullscreen')"
           icon="android-expand"
-        ></button>
-        <button
+        ></i-button>
+        <i-button
           type="primary"
           size="large"
           @click="toolsBarSettings"
           :title="$t('console.toolsbar_settings')"
           icon="settings"
-        ></button>
+        ></i-button>
       </Button-group>
     </div>
     <div v-show="statusIsFullscreen" class="toolsbar_exit_fullscreen">
-      <button
+      <i-button
         type="primary"
         size="large"
         @click="exitFullscreenMode"
         :title="$t('console.toolsbar_exit_fullscreen')"
         icon="android-contract"
-      ></button>
+      ></i-button>
     </div>
     <div id="terminal"></div>
   </div>

@@ -17,16 +17,16 @@
     <Row class="pre-footer-content" type="flex" justify="center" align="middle">
       <i-col :xs="22" :sm="12" :md="8" :lg="6">
         <h1>{{ $t("signin.form_title") }}</h1>
-        <form ref="formValue" :model="formValue" :rules="formRule">
+        <i-form ref="formValue" :model="formValue" :rules="formRule">
           <Form-item prop="fullHost">
             <i-input
               type="text"
               v-model="formValue.fullHost"
               :placeholder="$t('signin.form_fullhost_ph')"
             >
-              <span slot="prepend">{{
-                $t("signin.form_fullhost_prepend")
-              }}</span>
+              <span slot="prepend">
+                {{ $t("signin.form_fullhost_prepend") }}
+              </span>
             </i-input>
           </Form-item>
           <Form-item prop="username">
@@ -49,23 +49,22 @@
             </i-input>
           </Form-item>
           <Form-item>
-            <button
+            <i-button
               type="success"
               :loading="submitLoading"
               @click="handleSubmit('formValue');"
               long
             >
               <template v-if="!submitLoading">
-                <Icon type="paper-airplane"></Icon>&emsp;{{
-                  $t("signin.form_submit_btn")
-                }}
+                <Icon type="paper-airplane"></Icon>
+                &emsp;{{ $t("signin.form_submit_btn") }}
               </template>
               <template v-else>
                 {{ $t("signin.form_submit_btn_loading") }}
               </template>
-            </button>
+            </i-button>
           </Form-item>
-        </form>
+        </i-form>
       </i-col>
     </Row>
     <Footers></Footers>

@@ -28,13 +28,13 @@
       <div class="main-content">
         <Row type="flex" justify="center" align="middle">
           <i-col span="24">
-            <h1><img src="../assets/ssh.png" /></h1>
+            <h1><img src="@/assets/ssh.png" /></h1>
             <h2>
               <p>{{ $t("index.welcome") }}!</p>
               <br />
-              <button @click="toSignIn" type="primary">
+              <i-button @click="toSignIn" type="primary">
                 {{ $t("index.goto_signin") }}
-              </button>
+              </i-button>
             </h2>
           </i-col>
         </Row>
