@@ -1,5 +1,7 @@
 # sshWebConsole
 
+frontend code of genshen/sshWebConsole
+
 ## Project setup
 ```
 yarn install
