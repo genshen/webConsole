@@ -27,7 +27,12 @@ sshWebSocket.bindTerminal = function(
   };
   let handleTerminalData = function(data) {
     websocket.send(
-      JSON.stringify({ type: "terminal", data: Base64.encode(data) })
+      JSON.stringify({
+        type: "terminal",
+        data: {
+          base64: Base64.encode(data) // encode data as base64 format
+        }
+      })
     );
   };
 
