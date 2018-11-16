@@ -67,7 +67,7 @@
 </style>
 <style>
 /* the value of z-index of iview.notice is 1010
-  and, the value of z-index of top Menu is 900 */
+    and, the value of z-index of top Menu is 900 */
 #terminal .xterm.fullscreen {
   z-index: 901;
 }
@@ -189,6 +189,7 @@ import { Terminal } from "xterm";
 import FileTree from "./filetree/FileTree";
 import Util from "@/libs/utils";
 import Config from "@/config/config";
+import terminalResize from "@/libs/terminal-resize";
 import sshWebSocket from "@/libs/sshwebsocket";
 import stringFormat from "@/libs/string_format";
 import apiRouters from "@/config/api_routers";
@@ -212,10 +213,6 @@ export default {
       host: "waiting connection",
       username: "Loading",
       statusIsFullscreen: false,
-      termConfig: {
-        cols: 120,
-        rows: 48
-      },
       fileTransferModal: false
     };
   },
@@ -246,6 +243,7 @@ export default {
       });
       this.statusIsFullscreen = true;
       term.toggleFullScreen(true);
+      this.onWindowResize();
       return false;
     },
     toolsBarSettings() {
@@ -254,10 +252,19 @@ export default {
     exitFullscreenMode() {
       this.statusIsFullscreen = false;
       term.toggleFullScreen(false);
+      this.onWindowResize();
     },
     fileTransferModalOnOk() {
       this.fileTransferModal = false;
+    },
+    onWindowResize() {
+      // this function will be called when resizing window or entering/exiting full screen mode.
+      term.fit(); // it will make terminal resized.
     }
+    // onTerminalResize(size) {
+    //   this.termConfig.rows = size.rows;
+    //   this.termConfig.cols = size.cols;
+    // }
   },
   created() {
     if (window.localStorage.getItem("user.host")) {
@@ -277,13 +284,11 @@ export default {
       bellStyle: "sound",
       theme: theme.default_theme
     });
-
     term.open(document.getElementById("terminal"));
-    term.on("resize", size => {
-      this.termConfig.rows = size.rows;
-      this.termConfig.cols = size.cols;
-    });
-    term.fit();
+
+    // term.on("resize", this.onTerminalResize);
+    window.addEventListener("resize", this.onWindowResize);
+    term.fit(); // first resizing
 
     let _t = sessionStorage.getItem(Config.jwt.tokenName);
     if (_t) {
@@ -292,14 +297,12 @@ export default {
           apiRouters.router.ws_ssh,
           stringFormat.format(
             apiRouters.params.ws_ssh,
-            this.termConfig.cols,
-            this.termConfig.rows,
+            term.cols,
+            term.rows,
             _t
           )
         )
       );
-      // console.log(Util.loadWebSocketUrl(Config.net.webSocketProtocol, '/ws/ssh', 'cols=' + this.termConfig.cols + '&rows=' + this.termConfig.rows +
-      //   '&' + Config.jwt.tokenName + '=' + _t))
       this.connectionAlive = true;
 
       socket.onclose = () => {
@@ -311,12 +314,17 @@ export default {
         });
       };
       sshWebSocket.bindTerminal(term, socket, true, -1);
+      terminalResize.bindTerminalResize(term, socket);
     } else {
       this.$Notice.error({
         title: this.$t("console.web_socket_expire")
       });
       this.$router.replace({ name: "signin" });
     }
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.onWindowResize);
+    // term.off("resize", this.onTerminalResize);
   }
 };
 </script>
