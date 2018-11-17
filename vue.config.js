@@ -1,4 +1,16 @@
+// set global config
+
+// api domain(only in production mode),
+// set to ''/undefined/false to use default value: window.location.host
+process.env.VUE_APP_API_URL = "";
+
 module.exports = {
+  baseUrl:
+    process.env.NODE_ENV === "production"
+      ? process.env.PUBLISH_BASE_URL
+        ? process.env.PUBLISH_BASE_URL
+        : "/"
+      : "/",
   runtimeCompiler: true,
   assetsDir: "static",
   devServer: {
@@ -25,6 +37,8 @@ module.exports = {
     }
   },
   pwa: {
+    themeColor: "#2d8cf0",
+    msTileColor: "#5cadff",
     iconPaths: {
       // icon color #d85342
       favicon32: "static/img/icons/favicon-32x32.png",
