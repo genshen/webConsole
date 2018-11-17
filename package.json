@@ -1,6 +1,6 @@
 {
   "name": "ssh-web-console",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Connect to your linux machine via ssh in your browser.",
   "author": "genshen",
   "license": "MIT",
