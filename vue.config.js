@@ -25,6 +25,8 @@ module.exports = {
     }
   },
   pwa: {
+    themeColor: "#2d8cf0",
+    msTileColor: "#5cadff",
     iconPaths: {
       // icon color #d85342
       favicon32: "static/img/icons/favicon-32x32.png",
