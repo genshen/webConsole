@@ -8,11 +8,13 @@ util.title = function(title) {
   window.document.title = title;
 };
 
+// url: relative url starting with '/'
 util.loadUrl = function(url, params) {
   url = config.net.protocol + config.net.host + url + config.net.midParams;
   return params ? url + "?" + params : url;
 };
 
+// url: relative url starting with '/'
 util.loadWebSocketUrl = function(url, params) {
   const protocol = config.net.webSocketProtocol;
   url = protocol + config.net.host + url + config.net.midParams;

@@ -1,6 +1,6 @@
 {
   "name": "ssh-web-console",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Connect to your linux machine via ssh in your browser.",
   "author": "genshen",
   "license": "MIT",
@@ -14,7 +14,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "prepublishOnly": "vue-cli-service build",
+    "prepublishOnly": "vue-cli-service build --mode publish",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit"
   },
