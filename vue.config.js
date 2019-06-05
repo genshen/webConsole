@@ -5,7 +5,7 @@
 process.env.VUE_APP_API_URL = "";
 
 module.exports = {
-  baseUrl:
+  publicPath:
     process.env.NODE_ENV === "production"
       ? process.env.PUBLISH_BASE_URL
         ? process.env.PUBLISH_BASE_URL
