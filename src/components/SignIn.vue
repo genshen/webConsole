@@ -35,7 +35,7 @@
               v-model="formValue.username"
               :placeholder="$t('signin.form_username_ph')"
             >
-              <Icon type="ios-person" slot="prepend"></Icon>
+              <Icon type="md-person" slot="prepend"></Icon>
             </i-input>
           </Form-item>
           <Form-item prop="password">
@@ -43,20 +43,20 @@
               type="password"
               v-model="formValue.password"
               :placeholder="$t('signin.form_passwd_ph')"
-              @on-enter="handleSubmit('formValue');"
+              @on-enter="handleSubmit('formValue')"
             >
-              <Icon type="ios-locked" slot="prepend"></Icon>
+              <Icon type="md-lock" slot="prepend"></Icon>
             </i-input>
           </Form-item>
           <Form-item>
             <i-button
               type="success"
               :loading="submitLoading"
-              @click="handleSubmit('formValue');"
+              @click="handleSubmit('formValue')"
               long
             >
               <template v-if="!submitLoading">
-                <Icon type="paper-airplane"></Icon>
+                <Icon type="md-send"></Icon>
                 &emsp;{{ $t("signin.form_submit_btn") }}
               </template>
               <template v-else>

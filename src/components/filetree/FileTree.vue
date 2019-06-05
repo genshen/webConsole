@@ -40,8 +40,7 @@
       </div>
       <div v-else>
         <i-button
-          type="ghost"
-          icon="android-add"
+          icon="md-add"
           :loading="sftpConnectLoading"
           @click="openSftpConnection"
         >
@@ -54,7 +53,7 @@
     </div>
     <div v-else class="ssh-not-active">
       <!-- not active -->
-      <Icon type="android-warning"></Icon>
+      <Icon type="md-warning"></Icon>
       {{ $t("console.file_transfer.ssh_not_active") }}
     </div>
   </div>
@@ -108,7 +107,7 @@ export default {
     // eslint-disable-next-line no-unused-vars
     renderFileTree(h, { root, node, data }) {
       const _this = this;
-      let icon = "android-folder";
+      let icon = "md-folder";
       if (!data.is_dir) {
         icon = "ios-filing-outline";
       }

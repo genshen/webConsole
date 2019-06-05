@@ -81,14 +81,15 @@
           <i-col :xs="8" :sm="0">
             <div class="layout-nav-header">
               <i-button type="text">
-                <Icon type="navicon" size="32"></Icon>
+                <Icon type="md-navigate" size="32"></Icon>
               </i-button>
             </div>
           </i-col>
           <i-col :xs="0" :sm="12">
             <div class="layout-nav">
-              <Icon v-if="connectionAlive" type="record" color="#19be6b"></Icon>
-              <Icon v-else type="record" color="#bbbec4"></Icon>
+              <Icon v-if="connectionAlive" type="md-recording" color="#19be6b">
+              </Icon>
+              <Icon v-else type="md-recording" color="#bbbec4"></Icon>
               <a href="javascript:void(0)">{{ host }}</a>
             </div>
           </i-col>
@@ -99,12 +100,12 @@
               </router-link>
               <Dropdown v-else @on-click="handleDropdownMunu">
                 <a href="javascript:void(0)">
-                  <Icon type="person"></Icon>&nbsp;{{ username }}
-                  <Icon type="arrow-down-b"></Icon>
+                  <Icon type="md-person"></Icon>&nbsp;{{ username }}
+                  <Icon type="md-arrow-dropdown"></Icon>
                 </a>
                 <Dropdown-menu slot="list">
                   <Dropdown-item name="exit">
-                    <Icon type="android-exit"></Icon>&emsp;
+                    <Icon type="md-exit"></Icon>&emsp;
                     {{ $t("console.nav_user_exit") }}
                   </Dropdown-item>
                 </Dropdown-menu>
@@ -123,7 +124,7 @@
     >
       <!-- todo cancel closable. -->
       <p slot="header">
-        <Icon type="arrow-swap"></Icon>
+        <Icon type="md-swap"></Icon>
         <span>{{ $t("console.modal_file_transfer_title") }}</span>
         <span class="file-transfer-sub_title">
           ( <a>sftp://{{ username }}@{{ host }}</a> )
@@ -147,28 +148,28 @@
           size="large"
           @click="toolsBarRefresh"
           :title="$t('console.toolsbar_refresh')"
-          icon="android-refresh"
+          icon="md-refresh"
         ></i-button>
         <i-button
           type="primary"
           size="large"
           @click="toolsBarFileTransfer"
           :title="$t('console.toolsbar_file_transfer')"
-          icon="arrow-swap"
+          icon="md-swap"
         ></i-button>
         <i-button
           type="primary"
           size="large"
           @click="toolsBarFullscreen"
           :title="$t('console.toolsbar_fullscreen')"
-          icon="android-expand"
+          icon="md-expand"
         ></i-button>
         <i-button
           type="primary"
           size="large"
           @click="toolsBarSettings"
           :title="$t('console.toolsbar_settings')"
-          icon="settings"
+          icon="md-settings"
         ></i-button>
       </Button-group>
     </div>
@@ -178,7 +179,7 @@
         size="large"
         @click="exitFullscreenMode"
         :title="$t('console.toolsbar_exit_fullscreen')"
-        icon="android-contract"
+        icon="md-contract"
       ></i-button>
     </div>
     <div id="terminal"></div>

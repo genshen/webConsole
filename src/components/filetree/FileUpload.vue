@@ -38,16 +38,12 @@
           class="file-list-item"
           v-for="(file_item, index) in sortedFileList"
           :key="index"
-          @click="onGridFileItemClicked(file_item);"
-          v-on:dblclick="onGridFileItemDoubleClicked(file_item);"
+          @click="onGridFileItemClicked(file_item)"
+          v-on:dblclick="onGridFileItemDoubleClicked(file_item)"
         >
           <div class="file-icon">
-            <Icon
-              v-if="file_item.is_dir"
-              type="android-folder"
-              size="32"
-            ></Icon>
-            <Icon v-else type="document" size="32"></Icon>
+            <Icon v-if="file_item.is_dir" type="md-folder" size="32"></Icon>
+            <Icon v-else type="md-document" size="32"></Icon>
           </div>
           <span class="file-list-filename">{{ file_item.title }}</span>
         </li>
@@ -77,7 +73,7 @@
             :on-error="onUploadFailed"
           >
             <div class="file-icon">
-              <Icon type="android-upload" size="30"></Icon>
+              <Icon type="md-cloud-upload" size="30"></Icon>
               <!-- style="color: #2196f3"- -->
             </div>
             <span class="file-list-filename">{{ upload_status }}</span>

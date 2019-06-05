@@ -24,12 +24,12 @@
         &nbsp;{{ $t("global.home") }}&nbsp;
       </router-link>
       <span>|</span>
-      <Icon size="18" type="social-github"></Icon>
+      <Icon size="18" type="logo-github"></Icon>
       <a href="https://github.com/genshen/sshWebConsole" target="_blank">
         &nbsp;Github&nbsp;
       </a>
       <span>|</span>
-      <i-button @click="switchLang" type="ghost" size="small">
+      <i-button @click="switchLang" size="small">
         {{ $t("global.switch_lang") }}
       </i-button>
     </div>
