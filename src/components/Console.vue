@@ -196,7 +196,7 @@ import stringFormat from "@/libs/string_format";
 import apiRouters from "@/config/api_routers";
 import theme from "@/config/terminal_theme";
 
-// import 'xterm/dist/xterm.css';  //xterm.css D:\workspace\javascript\frontend\sshwebconsole\node_modules\
+// import 'xterm/dist/xterm.css';
 import * as fit from "xterm/lib/addons/fit/fit";
 import * as fullscreen from "xterm/lib/addons/fullscreen/fullscreen";
 import "xterm/lib/addons/fullscreen/fullscreen.css";

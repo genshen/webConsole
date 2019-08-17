@@ -25,7 +25,7 @@
       </router-link>
       <span>|</span>
       <Icon size="18" type="logo-github"></Icon>
-      <a href="https://github.com/genshen/sshWebConsole" target="_blank">
+      <a href="https://github.com/genshen/ssh-web-console" target="_blank">
         &nbsp;Github&nbsp;
       </a>
       <span>|</span>
