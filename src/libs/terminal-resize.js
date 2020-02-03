@@ -9,10 +9,10 @@ const resize = {
       );
     };
     // register resize event.
-    term.on("resize", onTermResize);
+    const resizeListener = term.onResize(onTermResize);
     // unregister resize event when WebSocket closed.
     websocket.addEventListener("close", function() {
-      term.off("resize", onTermResize);
+      resizeListener.dispose();
     });
   }
 };

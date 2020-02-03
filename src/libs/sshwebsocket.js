@@ -37,8 +37,9 @@ sshWebSocket.bindTerminal = function(
   };
 
   websocket.onmessage = handleWebSocketMessage;
+  let dataListener = null;
   if (bidirectional) {
-    term.on("data", handleTerminalData);
+    dataListener = term.onData(handleTerminalData);
   }
 
   // send heartbeat package to avoid closing webSocket connection in some proxy environmental such as nginx.
@@ -48,7 +49,9 @@ sshWebSocket.bindTerminal = function(
 
   websocket.addEventListener("close", function() {
     websocket.removeEventListener("message", handleWebSocketMessage);
-    term.off("data", handleTerminalData);
+    if (dataListener) {
+      dataListener.dispose();
+    }
     delete term.socket;
     clearInterval(heartBeatTimer);
   });

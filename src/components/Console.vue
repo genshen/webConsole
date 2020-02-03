@@ -197,12 +197,13 @@ import apiRouters from "@/config/api_routers";
 import theme from "@/config/terminal_theme";
 
 // import 'xterm/dist/xterm.css';
-import * as fit from "xterm/lib/addons/fit/fit";
-import * as fullscreen from "xterm/lib/addons/fullscreen/fullscreen";
-import "xterm/lib/addons/fullscreen/fullscreen.css";
+import { FitAddon } from "xterm-addon-fit";
+// import * as fullscreen from "xterm/lib/addons/fullscreen/fullscreen";
+// import "xterm/lib/addons/fullscreen/fullscreen.css";
 /* And for typescript, see: https://webpack.js.org/guides/typescript/ */
 
 let term = null;
+let fitAddon = null;
 
 export default {
   components: {
@@ -213,7 +214,7 @@ export default {
       connectionAlive: false,
       host: "waiting connection",
       username: "Loading",
-      statusIsFullscreen: false,
+      // statusIsFullscreen: false,
       fileTransferModal: false
     };
   },
@@ -242,25 +243,25 @@ export default {
       this.$Notice.open({
         title: this.$t("console.ecs_to_exit_fullscreen")
       });
-      this.statusIsFullscreen = true;
-      term.toggleFullScreen(true);
-      this.onWindowResize();
+      // this.statusIsFullscreen = true;
+      // term.toggleFullScreen(true);
+      // this.onWindowResize();
       return false;
     },
     toolsBarSettings() {
       this.$Message.warning("under developing"); // todo
     },
     exitFullscreenMode() {
-      this.statusIsFullscreen = false;
-      term.toggleFullScreen(false);
-      this.onWindowResize();
+      // this.statusIsFullscreen = false;
+      // term.toggleFullScreen(false);
+      // this.onWindowResize();
     },
     fileTransferModalOnOk() {
       this.fileTransferModal = false;
     },
     onWindowResize() {
       // this function will be called when resizing window or entering/exiting full screen mode.
-      term.fit(); // it will make terminal resized.
+      fitAddon.fit(); // it will make terminal resized.
     }
     // onTerminalResize(size) {
     //   this.termConfig.rows = size.rows;
@@ -278,18 +279,19 @@ export default {
   },
   mounted() {
     // let self = this
-    Terminal.applyAddon(fullscreen);
-    Terminal.applyAddon(fit);
+    // Terminal.applyAddon(fullscreen);
     term = new Terminal({
       cursorBlink: true,
       bellStyle: "sound",
       theme: theme.default_theme
     });
+    fitAddon = new FitAddon();
+    term.loadAddon(fitAddon);
     term.open(document.getElementById("terminal"));
 
     // term.on("resize", this.onTerminalResize);
     window.addEventListener("resize", this.onWindowResize);
-    term.fit(); // first resizing
+    fitAddon.fit(); // first resizing
 
     let _t = sessionStorage.getItem(Config.jwt.tokenName);
     if (_t) {
