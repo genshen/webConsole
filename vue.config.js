@@ -32,7 +32,8 @@ module.exports = {
       vue: "Vue",
       "vue-router": "VueRouter",
       "vue-i18n": "VueI18n",
-      iview: "iview"
+      "view-design": "iview",
+      iview: "ViewUI"
       // 'xterm': 'xterm'
     }
   },

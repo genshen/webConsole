@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import iView from "iview";
+import ViewUI from "view-design";
 import Utils from "@/libs/utils";
 
 Vue.use(Router);
@@ -36,13 +36,13 @@ const vueRouter = new Router({
 });
 
 vueRouter.beforeEach((to, from, next) => {
-  iView.LoadingBar.start();
+  ViewUI.LoadingBar.start();
   Utils.title(to.meta.title);
   next();
 });
 
 vueRouter.afterEach(() => {
-  iView.LoadingBar.finish();
+  ViewUI.LoadingBar.finish();
   window.scrollTo(0, 0);
 });
 
