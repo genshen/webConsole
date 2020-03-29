@@ -12,6 +12,13 @@
   height: 100%;
 }
 </style>
+<style>
+/*override css style defined in iview */
+.ivu-form-item-content .ivu-form-item-error-tip {
+  font-size: 13px; /*form validation error tip*/
+}
+</style>
+
 <template>
   <div class="signin footer-container">
     <Row class="pre-footer-content" type="flex" justify="center" align="middle">
@@ -20,32 +27,31 @@
         <i-form ref="formValue" :model="formValue" :rules="formRule">
           <Form-item prop="fullHost">
             <i-input
+              prefix="md-desktop"
               type="text"
               v-model="formValue.fullHost"
               :placeholder="$t('signin.form_fullhost_ph')"
             >
-              <span slot="prepend">
-                {{ $t("signin.form_fullhost_prepend") }}
-              </span>
             </i-input>
           </Form-item>
           <Form-item prop="username">
             <i-input
+              prefix="md-person"
               type="text"
               v-model="formValue.username"
               :placeholder="$t('signin.form_username_ph')"
             >
-              <Icon type="md-person" slot="prepend"></Icon>
             </i-input>
           </Form-item>
           <Form-item prop="password">
             <i-input
+              prefix="md-lock"
               type="password"
+              password
               v-model="formValue.password"
               :placeholder="$t('signin.form_passwd_ph')"
               @on-enter="handleSubmit('formValue')"
             >
-              <Icon type="md-lock" slot="prepend"></Icon>
             </i-input>
           </Form-item>
           <Form-item>
