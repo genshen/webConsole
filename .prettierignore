@@ -1,0 +1,17 @@
+.DS_Store
+.vscode/
+.idea/
+node_modules/
+build/
+.*ignore
+.gitattributes
+*.html
+Dockerfile
+*.conf
+.npmrc
+.env
+*.png
+*.ico
+*.svg
+*.xml
+LICENCE
