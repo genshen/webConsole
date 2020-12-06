@@ -1,5 +1,10 @@
-let config = {
+const config = {
   net: {
+    protocol: 'http',
+    webSocketProtocol: 'ws',
+    host: window.location.host,
+    isVPN: false,
+    midParams: '',
     api_domain:
       process.env.NODE_ENV === "production"
         ? process.env.VUE_APP_API_URL
@@ -13,7 +18,12 @@ let config = {
   },
   jwt: {
     tokenName: "_t"
-  }
+  },
+  router: {
+    basepath: process.env.REACT_APP_ROUTER_BASE
+      ? process.env.REACT_APP_ROUTER_BASE
+      : '',
+  },
 };
 
 config.net.protocol = window.location.protocol + "//";
