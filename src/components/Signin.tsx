@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Button, Pane, Heading, TextInputField, GeolocationIcon, FormField, toaster } from 'evergreen-ui';
 import { useTranslation } from 'react-i18next'
+
+import Config from "../config/config"
+import Utils from "../libs/utils"
+import apiRouters from '../config/api_routers';
 
 interface FieldState {
   isInvalid: boolean
@@ -9,17 +13,40 @@ interface FieldState {
   value: string
 }
 
+const checkHostFormat = (host: string) => {
+  if (!host || host === '') {
+    return [false, '', 22]
+  }
+  const hostList = host.split(":")
+  if (hostList.length === 1) {
+    return [true, host, 22]
+  }
+  const ok = hostList.length === 2 && hostList[1].length !== 0 && !isNaN(Number(hostList[1]))
+  if (ok) {
+    return [true, hostList[0], parseInt(hostList[1])]
+  } else {
+    return [false, host, 22]
+  }
+}
 
 const Signin = (props: RouteComponentProps) => {
   const { t } = useTranslation(['signin'])
 
-  const defaultFieldState = {
+  const lhost = window.localStorage.getItem("user.host")
+  const luname = window.localStorage.getItem("user.username")
+
+  const [hostField, setHostField] = useState<FieldState>({
     isInvalid: false,
     validationMessage: undefined,
-    value: ''
-  }
-  const [hostField, setHostField] = useState<FieldState>(defaultFieldState)
-  const [unameField, setUnameField] = useState<FieldState>(defaultFieldState)
+    value: lhost ? lhost : '',
+  })
+  const [unameField, setUnameField] = useState<FieldState>({
+    isInvalid: false,
+    validationMessage: undefined,
+    value: luname ? luname : '',
+  })
+  const [passwdField, setPasswdField] = useState<string>('')
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false)
 
   const onHostChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     const host = event!.target!.value.trim()
@@ -28,11 +55,8 @@ const Signin = (props: RouteComponentProps) => {
       setHostField({ isInvalid: true, validationMessage: t('signin:form_fullhost_required'), value: host })
       return false
     }
-    const list = host.split(":")
-    if (list.length === 1) {
-      setHostField({ isInvalid: false, validationMessage: undefined, value: host })
-      return true
-    } else if (list.length === 2 && list[1].length !== 0 && !isNaN(Number(list[1]))) {
+    const [ok] = checkHostFormat(host)
+    if (ok) {
       setHostField({ isInvalid: false, validationMessage: undefined, value: host })
       return true
     } else {
@@ -51,20 +75,98 @@ const Signin = (props: RouteComponentProps) => {
     return true
   }
 
+  const onPasswdChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const password = event!.target!.value.trim()
+    setPasswdField(password)
+  }
+
   const doSignin = () => {
-    if(hostField.isInvalid || unameField.isInvalid ) {
-      toaster.warning(
-        t('signin:form_has_error'),
-        {
-          id: 'forbidden-action'
-        }
-      )
+    // still check form when submitting.
+    // (e.g. We don't edit input box, leaving it blank,
+    // which makes host and username empty, but `isInvalid` is still false).
+    let hasError = false
+    if (hostField.isInvalid || unameField.isInvalid) {
+      hasError = true
+      // we dont need show error message and invalid statue here, because it is alreay in invalid status.
+    }
+    if (!hostField.value || hostField.value === '') {
+      hasError = true
+      setHostField({ isInvalid: true, validationMessage: t('signin:form_fullhost_required'), value: hostField.value })
+    }
+    if (!unameField.value || unameField.value === '') {
+      hasError = true
+      setUnameField({ isInvalid: true, validationMessage: t('signin:form_username_required'), value: unameField.value })
+    }
+    // prepare data for login
+    const [ok, host, port] = checkHostFormat(hostField.value)
+    if (!ok) {
+      hasError = true
+      setHostField({ isInvalid: true, validationMessage: t('signin:form_fullhost_error'), value: hostField.value })
+    }
+    if (hasError) {
+      toaster.warning(t('signin:form_has_error'), { id: 'forbidden-action' })
       return
     } else {
       toaster.closeAll()
     }
+
+    // this.$Loading.start();
+    setSubmitLoading(true)
     // post to login
-    props.history.push('/console');
+    Utils.axiosInstance
+      .post(Utils.loadUrl(apiRouters.router.sign_in, null), {
+        // _xsrf: Utils.base64Decode(xsrf.split("|")[0]), // todo
+        host: host,
+        port: port,
+        username: unameField.value,
+        passwd: passwdField,
+      })
+      .then(response => {
+        try {
+          if (!response.data || response.data.has_error) {
+            // self.$Loading.error();
+            switch (response.data.message) {
+              case 0:
+                toaster.danger(t("signin:form_has_error"));
+                break;
+              case 1:
+                toaster.danger(t("signin:form_error_passport"));
+                break;
+              case 2:
+                toaster.danger(t("signin:form_error_ssh_login"));
+                break;
+            }
+          } else {
+            if (!response.data.addition) {
+              // self.$Loading.error();
+              toaster.danger(t("signin:form_error_remote_server"));
+            } else {
+              // self.$Loading.finish();
+              toaster.success(t("signin:signin_success"));
+              localStorage.setItem("user.host", hostField.value);
+              localStorage.setItem("user.username", unameField.value);
+              sessionStorage.setItem(
+                Config.jwt.tokenName,
+                response.data.addition
+              );
+
+              props.history.push('/console');
+            }
+          }
+        } catch (e) {
+          // self.$Loading.error();
+          toaster.danger(t("signin:form_error_ssh_login"));
+        }
+        setSubmitLoading(false)
+      })
+      .catch((e: Error) => {
+        // self.$Loading.error();
+        toaster.danger(t("signin:form_error_ssh_login") + ": " + e.message);
+        setSubmitLoading(false)
+      });
+    // } else {
+    //   toaster.danger(this.$t('global.error_occurs_try_refresh'))
+    // }
   }
 
   return (
@@ -80,6 +182,7 @@ const Signin = (props: RouteComponentProps) => {
         }}>
           <Pane textAlign="left">
             <TextInputField
+              value={hostField.value}
               isInvalid={hostField.isInvalid}
               validationMessage={hostField.validationMessage}
               label={t('signin:form_fullhost_label')}
@@ -89,6 +192,7 @@ const Signin = (props: RouteComponentProps) => {
               marginBottom="8px"
             />
             <TextInputField
+              value={unameField.value}
               isInvalid={unameField.isInvalid}
               label={t('signin:form_username_label')}
               onChange={onUsernameChanged}
@@ -102,6 +206,8 @@ const Signin = (props: RouteComponentProps) => {
               type="password"
               placeholder={t('signin:form_passwd_ph')}
               marginBottom="24px"
+              onChange={onPasswdChanged}
+              onBlur={onPasswdChanged}
               onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>): void => {
                 // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
                 if (event.key === 'Enter') {
@@ -113,7 +219,7 @@ const Signin = (props: RouteComponentProps) => {
             />
           </Pane>
           <FormField>
-            <Button type="submit" width="100%" appearance="primary" intent="success" iconBefore={GeolocationIcon}>
+            <Button isLoading={submitLoading} type="submit" width="100%" appearance="primary" intent="success" iconBefore={GeolocationIcon}>
               {t('signin:form_submit_btn')}
             </Button>
           </FormField>
