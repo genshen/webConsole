@@ -1,23 +1,23 @@
 import { Base64 } from "js-base64";
+import { IDisposable, Terminal } from "xterm";
 
-const sshWebSocket = {};
+const sshWebSocket = {
 
-sshWebSocket.bindTerminal = function(
-  term,
-  websocket,
-  bidirectional,
-  bufferedTime
-) {
-  term.socket = websocket;
-
-  let messageBuffer = null;
-  let handleWebSocketMessage = function(ev) {
+  bindTerminal: (
+    term: Terminal,
+    websocket: WebSocket,
+    bidirectional: boolean,
+    bufferedTime: number
+  ) => {
+  // term.socket = websocket;
+  let messageBuffer: string = '';
+  const handleWebSocketMessage = function (ev: MessageEvent) {
     if (bufferedTime && bufferedTime > 0) {
       if (messageBuffer) {
         messageBuffer += ev.data;
       } else {
         messageBuffer = ev.data;
-        setTimeout(function() {
+        setTimeout(function () {
           term.write(messageBuffer);
         }, bufferedTime);
       }
@@ -25,7 +25,7 @@ sshWebSocket.bindTerminal = function(
       term.write(ev.data);
     }
   };
-  let handleTerminalData = function(data) {
+  const handleTerminalData = function (data: string) {
     websocket.send(
       JSON.stringify({
         type: "terminal",
@@ -37,24 +37,25 @@ sshWebSocket.bindTerminal = function(
   };
 
   websocket.onmessage = handleWebSocketMessage;
-  let dataListener = null;
+  let dataListener: IDisposable | null = null;
   if (bidirectional) {
     dataListener = term.onData(handleTerminalData);
   }
 
   // send heartbeat package to avoid closing webSocket connection in some proxy environmental such as nginx.
-  let heartBeatTimer = setInterval(function() {
+  const heartBeatTimer = setInterval(function () {
     websocket.send(JSON.stringify({ type: "heartbeat", data: "" }));
   }, 20 * 1000);
 
-  websocket.addEventListener("close", function() {
+  websocket.addEventListener("close", function () {
     websocket.removeEventListener("message", handleWebSocketMessage);
     if (dataListener) {
       dataListener.dispose();
     }
-    delete term.socket;
+    // delete term.socket;
     clearInterval(heartBeatTimer);
   });
+  }
 };
 
 export default sshWebSocket;
