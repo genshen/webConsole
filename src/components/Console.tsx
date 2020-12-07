@@ -1,7 +1,9 @@
 import React, { Component, useEffect, useRef, useState } from 'react';
 import { Pane, Heading, Badge, Menu, Popover, Position, Avatar, IconButton, Tab, Portal, Tablist, Button, SideSheet, Paragraph, Card } from 'evergreen-ui'
 import { FullCircleIcon, RefreshIcon, EditIcon, SwapVerticalIcon, FullscreenIcon, LogOutIcon, CogIcon } from 'evergreen-ui'
+import { useTranslation } from 'react-i18next'
 import { FitAddon } from 'xterm-addon-fit'
+
 import XTerm from './term/XTerm'
 import theme from './term/term_theme'
 
@@ -71,6 +73,7 @@ const SiderSftp = ({isShown, hideSideSheeeet}: SideSftpProps) => {
 const Console = () => {
   const [isSideSheetShown, setSideSheetShwon] = useState<boolean>(false)
   const terminalRef = useRef<XTerm>(null)
+  const { t } = useTranslation(['translation', 'console'])
   const fitAddon = new FitAddon()
   // let ws: WebSocket | undefined = undefined
 
@@ -86,7 +89,7 @@ const Console = () => {
   return (
     <Pane height="100vh" display="flex" flexDirection="column" borderRadius={3}>
       <Pane display="flex" flexDirection="row" alignItems="center" background="rgba(27,33,47,0.86)">
-        <Heading padding={18} color="white">SSH Web Console</Heading>
+        <Heading padding={18} color="white"> {t('title')}</Heading>
         <Pane padding={18} flex={1} alignItems="center" alignContent="center" textAlign="center">
           <FullCircleIcon verticalAlign="baseline" size={10} color="success" marginRight={8} />
           <Badge isInteractive textTransform="lowercase" color="green">
@@ -103,7 +106,7 @@ const Console = () => {
               <Menu.Divider/>
               <Menu.Group>
                 <Menu.Item icon={LogOutIcon} intent="danger">
-                  Exit...
+                  {t('console:nav_user_exit')} 
                 </Menu.Item>
               </Menu.Group>
             </Menu>

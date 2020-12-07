@@ -7,6 +7,7 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import config from './config/config';
+import './locales/i18n'
 
 ReactDOM.render(
   <React.StrictMode>

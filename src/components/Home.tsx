@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { Button, Pane, Heading } from 'evergreen-ui';
+import { useTranslation } from 'react-i18next'
 
 import Footer from './layout/Footer'
 import Header from './layout/Header'
@@ -10,14 +11,17 @@ import "./home.less"
 import headerLogo from '../assets/ssh.png'
 
 const MainPage = () => {
+  const { t } = useTranslation(['home'])
   return (<>
     <Pane alignItems="center" justifyContent="center" display="flex" flexDirection="column">
       <div style={{minHeight: "360px", marginTop: "10rem", textAlign: 'center'}}>
         <img src={headerLogo} className="App-logo" alt="logo" />
-        <Heading marginBottom="0.6rem" marginTop="0.6rem"  size={700}>@Welcome to SSH Web Console!</Heading>
+        <Heading marginBottom="0.6rem" marginTop="0.6rem"  size={700}>
+          {t('home:welcome')}
+        </Heading>
         <div>
           <NavLink to="/signin"  className="focus-ring-link">    
-            <Button appearance="primary">@Goto Signin Page</Button>
+            <Button appearance="primary"> {t('home:goto_signin')} </Button>
           </NavLink>
         </div>
       </div>

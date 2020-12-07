@@ -1,12 +1,13 @@
 export default {
   "zh-CN": {
     global: {
+      title: 'SSH Web Console',
       home: "首页",
-      switch_lang: "En",
-      error_happened_try_refresh: "Oh! 出现了一个错误,请刷新后重试."
+      switch_lang: "English",
+      error_occurs_try_refresh: "Oh! 出现了一个错误,请刷新后重试."
     },
     index: {
-      welcome: "欢迎使用 SSH web Console",
+      welcome: "欢迎使用 SSH Web Console",
       goto_signin: "去往登录页面"
     },
     console: {
@@ -44,9 +45,11 @@ export default {
     },
     signin: {
       form_title: "登录 SSH Web Console",
-      form_fullhost_prepend: "主机:",
-      form_fullhost_ph: "ip:端口号 (例: hpc.gensh.me:22)",
+      form_fullhost_label: "主机",
+      form_fullhost_ph: "ip:端口号 (例: ssh.hpcer.dev:22)",
+      form_username_label: "用户名",
       form_username_ph: "用户名",
+      form_passwd_label: "密码",
       form_passwd_ph: "密码",
       form_submit_btn: "登录",
       form_submit_btn_loading: "正在登录",
@@ -63,12 +66,13 @@ export default {
   },
   "en-US": {
     global: {
+      title: 'SSH Web Console',
       home: "Home",
       switch_lang: "中文",
-      error_happened_try_refresh: "Oh! A error happend.Please refresh the page."
+      error_occurs_try_refresh: "Oh! An error occurs.Please refresh the page."
     },
     index: {
-      welcome: "Welcome to SSH web Console",
+      welcome: "Welcome to SSH Web Console",
       goto_signin: "Go to Sign in Page"
     },
     console: {
@@ -101,16 +105,17 @@ export default {
       web_socket_disconnect: "Disconnected from remote host",
       web_socket_expire: "Your session has been expired,please relogin.",
       relogin: "Relogin",
-      ecs_to_exit_fullscreen:
-        "To exit fullscreen Mode,please press <b>ESC</b> key",
+      ecs_to_exit_fullscreen: "Press <b>ESC</b> key to exit fullscreen mode.",
       modal_file_transfer_title: "File Transfer",
       modal_file_transfer_ok_btn: "Finish"
     },
     signin: {
       form_title: "Sign In SSH Web Console",
-      form_fullhost_prepend: "host:",
+      form_fullhost_label: 'Host',
       form_fullhost_ph: "ip:port (e.g: hpc.gensh.me:22)",
+      form_username_label: "Username",
       form_username_ph: "Username",
+      form_passwd_label: "Password",
       form_passwd_ph: "Password",
       form_submit_btn: "Sign In",
       form_submit_btn_loading: "Loading",
