@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Pane, Text, Heading, Badge, Menu, Popover, Position, Avatar, Tab, Portal, Tablist, Button, SideSheet, Paragraph, Card, toaster, CornerDialog} from 'evergreen-ui'
+import { Pane, Text, Heading, Badge, Menu, Popover, Position, Avatar, Tab, Portal, Tablist, Button, SideSheet, Paragraph, Card, toaster, CornerDialog } from 'evergreen-ui'
 import { FullCircleIcon, UngroupObjectsIcon, RefreshIcon, SwapVerticalIcon, FullscreenIcon, LogOutIcon, CogIcon, ErrorIcon, DisableIcon } from 'evergreen-ui'
 import { RouteComponentProps } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
@@ -7,6 +7,7 @@ import { FitAddon } from 'xterm-addon-fit'
 
 import XTerm from './term/XTerm'
 import theme from './term/term_theme'
+import FileTrans, { NodeConfig, ConnStatus } from './FileTrans'
 import sshWebSocket from '../libs/sshwebsocket'
 import terminalResize from '../libs/terminal-resize'
 import Util from "../libs/utils"
@@ -16,73 +17,6 @@ import stringFormat from '../libs/string_format'
 
 import './console.less'
 
-interface SiderSftpState {
-  selectedIndex: number
-}
-
-interface SideSftpProps {
-  isShown: boolean
-  hideSideSheeeet: ()=> void
-}
-
-const SiderSftp = ({isShown, hideSideSheeeet}: SideSftpProps) => {
-  const [ state, setState ] = useState<SiderSftpState>({selectedIndex: 0})
-  return (
-    <>
-      <SideSheet
-        isShown={isShown}
-        onCloseComplete={hideSideSheeeet}
-        containerProps={{
-          display: 'flex',
-          flex: '1',
-          flexDirection: 'column',
-        }}
-      >
-        <Pane zIndex={1} flexShrink={0} elevation={0} backgroundColor="white">
-          <Pane padding={16} borderBottom="muted">
-            <Heading size={600}>SFTP</Heading>
-            <Paragraph size={400} color="muted">
-              ssh.hpcer.dev
-            </Paragraph>
-          </Pane>
-          <Pane display="flex" padding={8}>
-            <Tablist>
-              {['Traits', 'Event History', 'Identities'].map(
-                (tab, index) => (
-                  <Tab
-                    key={tab}
-                    isSelected={state.selectedIndex === index}
-                    onSelect={() => setState({selectedIndex: index })}
-                  >
-                    {tab}
-                  </Tab>
-                )
-              )}
-            </Tablist>
-          </Pane>
-        </Pane>
-        <Pane flex="1" overflowY="scroll" background="tint1" padding={16}>
-          <Card
-            backgroundColor="white"
-            elevation={0}
-            height={240}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Heading>SFTP content</Heading>
-          </Card>
-        </Pane>
-      </SideSheet>
-    </>
-  )
-}
-
-enum ConnStatus {
-  Connecting = 1,
-  ConnectionAlive,
-  ConnectionLost,
-}
 
 type ConnStatusPrrops = {
   host: string
@@ -118,11 +52,6 @@ const ConnectionStatus = (props: ConnStatusPrrops) => {
       </>
     )
   }
-}
-
-interface NodeConfig {
-  host: string
-  username: string
 }
 
 const Console = (props: RouteComponentProps) => {
@@ -242,9 +171,10 @@ const Console = (props: RouteComponentProps) => {
         />
       </Pane>
       <Pane display="flex" alignItems="center">
-        <SiderSftp isShown={isSideSheetShown} hideSideSheeeet={() => {
-          setSideSheetShwon(false)
-        }}/>
+        <FileTrans isShown={isSideSheetShown} node={{ host: nodeConfig.host, username: nodeConfig.username }}
+          hideSideSheeeet={() => {
+            setSideSheetShwon(false)
+          }} />
         <Button intent="success" onClick={() => setSideSheetShwon(true)}>
           SFTP
         </Button>
