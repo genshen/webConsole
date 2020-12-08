@@ -1,11 +1,18 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
-import { Pane, Heading, Badge, Menu, Popover, Position, Avatar, IconButton, Tab, Portal, Tablist, Button, SideSheet, Paragraph, Card } from 'evergreen-ui'
-import { FullCircleIcon, RefreshIcon, EditIcon, SwapVerticalIcon, FullscreenIcon, LogOutIcon, CogIcon } from 'evergreen-ui'
+import React, { useEffect, useRef, useState } from 'react';
+import { Pane, Text, Heading, Badge, Menu, Popover, Position, Avatar, Tab, Portal, Tablist, Button, SideSheet, Paragraph, Card, toaster, CornerDialog} from 'evergreen-ui'
+import { FullCircleIcon, UngroupObjectsIcon, RefreshIcon, SwapVerticalIcon, FullscreenIcon, LogOutIcon, CogIcon, ErrorIcon, DisableIcon } from 'evergreen-ui'
+import { RouteComponentProps } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 import { FitAddon } from 'xterm-addon-fit'
 
 import XTerm from './term/XTerm'
 import theme from './term/term_theme'
+import sshWebSocket from '../libs/sshwebsocket'
+import terminalResize from '../libs/terminal-resize'
+import Util from "../libs/utils"
+import apiRouters from '../config/api_routers'
+import Config from '../config/config'
+import stringFormat from '../libs/string_format'
 
 import './console.less'
 
@@ -63,26 +70,136 @@ const SiderSftp = ({isShown, hideSideSheeeet}: SideSftpProps) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Heading>Some content</Heading>
+            <Heading>SFTP content</Heading>
           </Card>
         </Pane>
       </SideSheet>
     </>
   )
 }
-const Console = () => {
+
+enum ConnStatus {
+  Connecting = 1,
+  ConnectionAlive,
+  ConnectionLost,
+}
+
+type ConnStatusPrrops = {
+  host: string
+  status: ConnStatus
+}
+
+const ConnectionStatus = (props: ConnStatusPrrops) => {
+  if (props.status === ConnStatus.Connecting) {
+    return (
+      <>
+        <UngroupObjectsIcon verticalAlign="baseline" size={10} color="info" marginRight={8} />
+        <Badge isInteractive textTransform="lowercase" color="blue">
+          waiting connection
+        </Badge>
+      </>
+    )
+  } else if (props.status === ConnStatus.ConnectionLost) {
+    return (
+      <>
+        <DisableIcon verticalAlign="baseline" size={10} color="#FAE2E2" marginRight={8} />
+        <Badge isInteractive color="red">
+          connection lost
+        </Badge>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <FullCircleIcon verticalAlign="baseline" size={10} color="success" marginRight={8} />
+        <Badge isInteractive textTransform="lowercase" color="green">
+          { props.host }
+        </Badge>
+      </>
+    )
+  }
+}
+
+interface NodeConfig {
+  host: string
+  username: string
+}
+
+const Console = (props: RouteComponentProps) => {
   const [isSideSheetShown, setSideSheetShwon] = useState<boolean>(false)
   const terminalRef = useRef<XTerm>(null)
   const { t } = useTranslation(['translation', 'console'])
-  const fitAddon = new FitAddon()
-  // let ws: WebSocket | undefined = undefined
+  const [fitAddon, setFitAddon] = useState<FitAddon>(new FitAddon())
+  const [connecting, setConnecting] = useState<ConnStatus>(ConnStatus.Connecting)
+  const [nodeConfig, setNodeConfig] = useState<NodeConfig>({host: "waiting connection", username: 'Loading'})
+  const [showCornerDialog, setShowCornerDialog] = useState<boolean>(false)
+
+  let ws: WebSocket | null = null
+
+  useEffect(() => {
+    const lhost = window.localStorage.getItem("user.host")
+    const luname = window.localStorage.getItem("user.username")
+    if (lhost === null) {
+      return
+    }
+    if (luname === null) {
+      return
+    }
+    setNodeConfig({host: lhost, username: luname})
+  }, [])
 
   useEffect(() => {
     // Once the terminal is loaded write a new line to it.
     const term = terminalRef.current!.terminal
-    term.writeln('Welcome to SSH web-console!')
     fitAddon.fit()
+    term.writeln('Welcome to SSH web-console!')
+
+    const _t = sessionStorage.getItem(Config.jwt.tokenName)
+    if (_t ===null) {
+      toaster.danger(t("console:web_socket_expire"))
+      // setConnecting(ConnStatus.ConnectionLost) 
+      props.history.push('/signin')
+      return
+    }
+
+    ws = new WebSocket(
+      Util.loadWebSocketUrl(
+        apiRouters.router.ws_ssh,
+        stringFormat.format(
+          apiRouters.params.ws_ssh,
+          term.cols+'',
+          term.rows+'',
+          _t
+        )
+      )
+    )
+    ws.onopen = () => {
+      setConnecting(ConnStatus.ConnectionAlive)
+    }
+
+    ws.onclose = () => {
+      term.setOption("cursorBlink", false);
+      sessionStorage.removeItem(Config.jwt.tokenName);
+      setConnecting(ConnStatus.ConnectionLost)
+      setShowCornerDialog(true)
+    }
+
+    sshWebSocket.bindTerminal(term, ws!, true, -1)
+    terminalResize.bindTerminalResize(term, ws!)
     return () => {
+      if (ws !== null) {
+        ws.close()
+      }
+    }
+  }, [])
+
+  const onWindowResize = () => {
+    fitAddon.fit()
+  }
+  useEffect (()=> {
+    window.addEventListener("resize", onWindowResize);
+    return () => {
+      window.removeEventListener('resize', onWindowResize)
     }
   }, [])
 
@@ -91,17 +208,14 @@ const Console = () => {
       <Pane display="flex" flexDirection="row" alignItems="center" background="rgba(27,33,47,0.86)">
         <Heading padding={18} color="white"> {t('title')}</Heading>
         <Pane padding={18} flex={1} alignItems="center" alignContent="center" textAlign="center">
-          <FullCircleIcon verticalAlign="baseline" size={10} color="success" marginRight={8} />
-          <Badge isInteractive textTransform="lowercase" color="green">
-            { } ssh.hpcer.dev
-        </Badge>
+          <ConnectionStatus status={connecting} host={nodeConfig.host} />
         </Pane>
         <Popover
           position={Position.BOTTOM_LEFT}
           content={
             <Menu>
               <Menu.Group>
-                <Menu.Item>@genshen</Menu.Item>
+                <Menu.Item>{'@'} { nodeConfig.username } </Menu.Item>
               </Menu.Group>
               <Menu.Divider/>
               <Menu.Group>
@@ -112,7 +226,7 @@ const Console = () => {
             </Menu>
           }
         >
-          <Avatar isSolid name="genshen" size={36} marginRight={36} cursor="pointer" />
+          <Avatar isSolid name={ nodeConfig.username } size={36} marginRight={36} cursor="pointer" />
         </Popover>
       </Pane>
       <Pane flex={1}>
@@ -127,14 +241,37 @@ const Console = () => {
           ref={terminalRef}
         />
       </Pane>
-      <Pane>
+      <Pane display="flex" alignItems="center">
         <SiderSftp isShown={isSideSheetShown} hideSideSheeeet={() => {
           setSideSheetShwon(false)
         }}/>
         <Button intent="success" onClick={() => setSideSheetShwon(true)}>
           SFTP
         </Button>
+        <Button intent="none" marginLeft="0.05rem">
+          Paste
+        </Button>
+        <Pane flex="1"></Pane>
+        <Text marginRight="0.4rem">active time: 0:00:00</Text>
       </Pane>
+      <CornerDialog
+        title={
+          <Text size={500} color="danger" alignItems="center" display="flex">
+            <ErrorIcon marginRight="0.2rem" /> { t("console:ssh_disconn_dialog_title") }
+          </Text>
+        }
+        isShown={showCornerDialog}
+        hasClose={false}
+        cancelLabel={t('console:ssh_disconn_dialog_cancel_btn')}
+        confirmLabel={t('console:ssh_disconn_dialog_confirm_btn')}
+        onConfirm={() => {
+          props.history.push('/signin')
+        }}
+        containerProps={{ zIndex: 10 }}
+        onCloseComplete={() => setShowCornerDialog(false) }
+      >
+       { t('console:ssh_disconn_dialog_text') }
+      </CornerDialog>
       <Portal>
         <Pane
           className="toolbar"
