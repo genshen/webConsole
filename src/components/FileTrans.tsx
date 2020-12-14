@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react"
-import { Alert, Button, Card, Heading, Pane, Paragraph, SideSheet, Strong, Tab, Tablist, toaster } from "evergreen-ui"
-import { FolderCloseIcon, DocumentIcon, DocumentShareIcon, UploadIcon } from "evergreen-ui"
+import { Alert, Card, Heading, Pane, Paragraph, SideSheet, Strong, Tab, Tablist, toaster } from "evergreen-ui"
+import { FolderCloseIcon, DocumentIcon, UploadIcon } from "evergreen-ui"
 import { useTranslation } from "react-i18next"
 
 import Config from '../config/config'
 import Utils from "../libs/utils"
 import apiRouters from '../config/api_routers'
-import './file_trans.less'
 import stringFormat from "../libs/string_format"
+import PathNav, { SPLIT_CHAR } from "./PathNav"
+import './file_trans.less'
 
-const HOME = "HOME";
+const HOME = "HOME"
 
 export enum ConnStatus {
   Connecting = 1,
@@ -55,13 +56,13 @@ interface GridFileViewProps {
   fileList: Array<FileItem>
   currentPath: CurrentPath,
   fileUploading: boolean, // todo:
-  onPathChanged: (item: FileItem[], path: string) => void
+  onPathChanged: (item: FileItem[], path: string, is_abs_path: boolean) => void
 }
 
 const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPathChanged }: GridFileViewProps) => {
   const { t } = useTranslation(['console'])
 
-  const onPath = (path: string, dir_only: boolean) => {
+  const onPath = (path: string) => {
     // when the path is changed // todo add cache
     if (path && path === currentPath.current_path) {
       return // if it is the same path.
@@ -76,7 +77,7 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
       toaster.danger(t("console:file_transfer.error_while_ls", { dir: path }))
     }, (children: FileItem[], error: boolean) => {
       if (!error) {
-        onPathChanged(children, path);
+        onPathChanged(children, path, path.startsWith(SPLIT_CHAR));
       }
     })
   }
@@ -84,7 +85,7 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
   const onGridFileDoubleClicked = (fileItem: FileItem) => {
     if (fileItem.is_dir) {
       // todo: set loading
-      onPath(fileItem.path, false)
+      onPath(fileItem.path)
     }
   }
 
@@ -111,8 +112,12 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
       elevation={0}
       minHeight="100%"
       display="flex"
+      flexDirection="column"
       padding="8px"
     >
+      <Pane marginBottom="0.4rem" className="path-nav">
+        <PathNav path={ currentPath.current_path } onPathClick={onPath} />
+      </Pane>
       <div className="overview-group-items">
         {fileList.map((f: FileItem) => {
           // if (f.is_dir)
@@ -225,9 +230,13 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
     })
   }
 
-  const setGridByFilePath = (children: Array<FileItem>, path: string) => {
+  const setGridByFilePath = (children: Array<FileItem>, path: string, is_abs_path: boolean) => {
     setFileList(() => { return [...children] }) // todo add time, data?
-    setCurentPath({ current_path: path, display_path: "$" + HOME + "/" + path })
+    if (is_abs_path) {
+      setCurentPath({ current_path: path, display_path: path })
+    } else {
+      setCurentPath({ current_path: path, display_path: "$" + HOME + "/" + path })
+    }
   }
 
   const openSftpConnection = () => {
