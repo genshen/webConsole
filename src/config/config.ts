@@ -1,19 +1,16 @@
 const config = {
   net: {
     protocol: 'http',
-    webSocketProtocol: 'ws',
+    webSocketProtocol: 'ws://',
     host: window.location.host,
     isVPN: false,
     midParams: '',
-    api_domain:
-      process.env.NODE_ENV === "production"
-        ? process.env.VUE_APP_API_URL
-          ? process.env.VUE_APP_API_URL
-          : window.location.host
-        : window.location.host,
+    api_domain: process.env.REACT_APP_API_URL
+      ? process.env.REACT_APP_API_URL
+      : window.location.host,
     vpnHost: "vpn3.ustb.edu.cn",
-    vpnParame: process.env.VUE_APP_API_URL
-      ? ",DanaInfo=" + process.env.VUE_APP_API_URL + ",SSL" // todo port
+    vpnParame: process.env.REACT_APP_API_URL
+      ? ",DanaInfo=" + process.env.REACT_APP_API_URL + ",SSL" // todo port
       : window.location.host
   },
   jwt: {
@@ -28,10 +25,12 @@ const config = {
 
 config.net.protocol = window.location.protocol + "//";
 config.net.webSocketProtocol =
-  process.env.NODE_ENV !== "development" &&
-  window.location.protocol === "https:"
+  process.env.REACT_APP_API_HTTPS
+  ? 'wss://':
+  (process.env.NODE_ENV !== "development" &&
+    window.location.protocol === "https:"
     ? "wss://"
-    : "ws://"; // todo add config.
+    : "ws://"); // todo add config.
 
 config.net.isVPN = (function() {
   // if (config.env !== 'development' && window.location.host !== config.net.api_domain) {
