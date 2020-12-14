@@ -171,7 +171,10 @@ const Console = (props: RouteComponentProps) => {
         />
       </Pane>
       <Pane display="flex" alignItems="center">
-        <FileTrans isShown={isSideSheetShown} node={{ host: nodeConfig.host, username: nodeConfig.username }}
+        <FileTrans
+          isShown={isSideSheetShown}
+          node={{ host: nodeConfig.host, username: nodeConfig.username }}
+          sshStatus={connecting}
           hideSideSheeeet={() => {
             setSideSheetShwon(false)
           }} />

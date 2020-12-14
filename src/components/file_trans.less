@@ -1,0 +1,54 @@
+.overview-item {
+  background-color:#F9F9FB;
+  color: #425A70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+//   margin: 4px;
+  padding: 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  .item-title {
+    width: 4.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+   }
+  .item-icon {
+    color: rgba(5, 124, 235, 0.877);
+    //  #2d8cf0
+    margin-bottom: 6px;
+  }
+  &:hover {
+    // margin: -4px;
+    // padding: 4px;
+    background-color: rgba(1, 108, 209, 0.079);
+    color: #1070CA;
+  }
+
+  &:focus-visible {
+    // margin: -4px;
+    // padding: 4px;
+    box-shadow: 0 0 0 2px rgba(1, 108, 209, 0.699);
+  }
+
+  &:active {
+    // margin: -4px;
+    // padding: 4px;
+    background-color: rgba(16, 112, 202, 0.14);
+    color: #DDEBF7;
+    box-shadow: 0 0 0 2px #016cd1;
+  }
+}
+
+.overview-group-items {
+    flex: 1;
+    display: inline-grid;
+    grid-template-columns: repeat(auto-fill, 90px);
+    // grid-template-columns: repeat(auto-fill, 10px);
+    grid-template-rows: repeat(auto-fill, 72px);
+    row-gap: 8px;
+    column-gap: 8px;
+}
