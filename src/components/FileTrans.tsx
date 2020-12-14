@@ -119,18 +119,20 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
         <PathNav path={ currentPath.current_path } onPathClick={onPath} />
       </Pane>
       <div className="overview-group-items">
-        {fileList.map((f: FileItem) => {
+        {fileList.sort((a, b) => {
+          if (a.is_dir && !b.is_dir) {
+            return -1
+          }
+          if (!a.is_dir && b.is_dir) {
+            return 1
+          }
+          return a.name == b.name ? 0 : a.name > b.name ? 1 : -1
+        }).map((f: FileItem) => {
           // if (f.is_dir)
           if (f.is_dir) {
             return (
-              <a className="overview-item">
-                <FolderCloseIcon
-                  size={32}
-                  className="item-icon"
-                  onDoubleClick={() => {
-                    onGridFileDoubleClicked(f)
-                  }}
-                />
+              <a className="overview-item" onDoubleClick={() => { onGridFileDoubleClicked(f) }}>
+                <FolderCloseIcon size={32} className="item-icon" />
                 <Strong size={300} title={f.name} className="item-title"> {f.name} </Strong>
               </a>)
           } else {
