@@ -18,12 +18,12 @@ import stringFormat from '../libs/string_format'
 import './console.less'
 
 
-type ConnStatusPrrops = {
+type ConnStatusProps = {
   host: string
   status: ConnStatus
 }
 
-const ConnectionStatus = (props: ConnStatusPrrops) => {
+const ConnectionStatus = (props: ConnStatusProps) => {
   if (props.status === ConnStatus.Connecting) {
     return (
       <>
@@ -47,7 +47,7 @@ const ConnectionStatus = (props: ConnStatusPrrops) => {
       <>
         <FullCircleIcon verticalAlign="baseline" size={10} color="success" marginRight={8} />
         <Badge isInteractive textTransform="lowercase" color="green">
-          { props.host }
+          {props.host}
         </Badge>
       </>
     )
@@ -60,7 +60,7 @@ const Console = (props: RouteComponentProps) => {
   const { t } = useTranslation(['translation', 'console'])
   const [fitAddon, setFitAddon] = useState<FitAddon>(new FitAddon())
   const [connecting, setConnecting] = useState<ConnStatus>(ConnStatus.Connecting)
-  const [nodeConfig, setNodeConfig] = useState<NodeConfig>({host: "waiting connection", username: 'Loading'})
+  const [nodeConfig, setNodeConfig] = useState<NodeConfig>({ host: "waiting connection", username: 'Loading' })
   const [showCornerDialog, setShowCornerDialog] = useState<boolean>(false)
 
   let ws: WebSocket | null = null
@@ -74,7 +74,7 @@ const Console = (props: RouteComponentProps) => {
     if (luname === null) {
       return
     }
-    setNodeConfig({host: lhost, username: luname})
+    setNodeConfig({ host: lhost, username: luname })
   }, [])
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const Console = (props: RouteComponentProps) => {
     term.writeln('Welcome to SSH web-console!')
 
     const _t = sessionStorage.getItem(Config.jwt.tokenName)
-    if (_t ===null) {
+    if (_t === null) {
       toaster.danger(t("console:web_socket_expire"))
       // setConnecting(ConnStatus.ConnectionLost) 
       props.history.push('/signin')
@@ -96,8 +96,8 @@ const Console = (props: RouteComponentProps) => {
         apiRouters.router.ws_ssh,
         stringFormat.format(
           apiRouters.params.ws_ssh,
-          term.cols+'',
-          term.rows+'',
+          term.cols + '',
+          term.rows + '',
           _t
         )
       )
@@ -125,6 +125,7 @@ const Console = (props: RouteComponentProps) => {
   const onWindowResize = () => {
     fitAddon.fit()
   }
+
   useEffect (()=> {
     window.addEventListener("resize", onWindowResize);
     return () => {
@@ -144,18 +145,18 @@ const Console = (props: RouteComponentProps) => {
           content={
             <Menu>
               <Menu.Group>
-                <Menu.Item>{'@'} { nodeConfig.username } </Menu.Item>
+                <Menu.Item>{'@'} {nodeConfig.username} </Menu.Item>
               </Menu.Group>
-              <Menu.Divider/>
+              <Menu.Divider />
               <Menu.Group>
                 <Menu.Item icon={LogOutIcon} intent="danger">
-                  {t('console:nav_user_exit')} 
+                  {t('console:nav_user_exit')}
                 </Menu.Item>
               </Menu.Group>
             </Menu>
           }
         >
-          <Avatar isSolid name={ nodeConfig.username } size={36} marginRight={36} cursor="pointer" />
+          <Avatar isSolid name={nodeConfig.username} size={36} marginRight={36} cursor="pointer" />
         </Popover>
       </Pane>
       <Pane flex={1}>
@@ -190,7 +191,7 @@ const Console = (props: RouteComponentProps) => {
       <CornerDialog
         title={
           <Text size={500} color="danger" alignItems="center" display="flex">
-            <ErrorIcon marginRight="0.2rem" /> { t("console:ssh_disconn_dialog_title") }
+            <ErrorIcon marginRight="0.2rem" /> {t("console:ssh_disconn_dialog_title")}
           </Text>
         }
         isShown={showCornerDialog}
@@ -201,9 +202,9 @@ const Console = (props: RouteComponentProps) => {
           props.history.push('/signin')
         }}
         containerProps={{ zIndex: 10 }}
-        onCloseComplete={() => setShowCornerDialog(false) }
+        onCloseComplete={() => setShowCornerDialog(false)}
       >
-       { t('console:ssh_disconn_dialog_text') }
+        {t('console:ssh_disconn_dialog_text')}
       </CornerDialog>
       <Portal>
         <Pane

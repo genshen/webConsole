@@ -32,7 +32,7 @@ config.net.webSocketProtocol =
     ? "wss://"
     : "ws://"); // todo add config.
 
-config.net.isVPN = (function() {
+config.net.isVPN = (() => {
   // if (config.env !== 'development' && window.location.host !== config.net.api_domain) {
   //   return true // url += config.net.vpnParame
   // }
@@ -43,7 +43,7 @@ config.net.isVPN = (function() {
 })();
 
 // get target host when communicating with backend api.
-config.net.host = (function() {
+config.net.host = (() => {
   if (config.net.isVPN) {
     return config.net.vpnHost;
   } else {
@@ -52,7 +52,7 @@ config.net.host = (function() {
 })();
 
 // please use midParams, instead of vpnParams.
-config.net.midParams = (function() {
+config.net.midParams = (() => {
   if (config.net.isVPN) {
     return config.net.vpnParame;
   } else {
