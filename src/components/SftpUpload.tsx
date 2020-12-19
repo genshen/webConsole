@@ -1,13 +1,14 @@
 import React, { useMemo } from "react"
 import { useDropzone } from "react-dropzone"
-import { Strong, Tooltip, UploadIcon, InfoSignIcon, toaster } from "evergreen-ui"
+import { Strong, Tooltip, UploadIcon, InfoSignIcon, toaster, DoubleChevronUpIcon } from "evergreen-ui"
 import { useTranslation } from "react-i18next"
+import axios from "axios"
 
 import Config from '../config/config'
 import Utils from "../libs/utils"
 import apiRouters from '../config/api_routers'
 import stringFormat from "../libs/string_format"
-import axios from "axios"
+import "./sftp_upload.less"
 
 const activeStyle = {
   style: {
@@ -16,19 +17,26 @@ const activeStyle = {
 }
 
 export type UploadEvent = {
-  onUploadSuccess: () => void
+  onUploadSuccess: (filename: string) => void
   onUploadStart: () => void
   onUploadProgress: (percent: number) => void
   onUploadError: (e: Error) => void
 }
 
+export type UploadStatus = {
+  isUploading: boolean
+  percent: number
+  hasError: boolean
+}
+
 interface UploadProps {
   cid: string
   current_path: string
+  uploadStatus: UploadStatus
   eventHandle: UploadEvent
 }
 
-const SftpUpload = ({ cid, current_path, eventHandle }: UploadProps) => {
+const SftpUpload = ({ cid, current_path, eventHandle, uploadStatus }: UploadProps) => {
   const { t } = useTranslation(['files'])
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -59,21 +67,23 @@ const SftpUpload = ({ cid, current_path, eventHandle }: UploadProps) => {
 
       const config = {
         onUploadProgress: (progressEvent: any) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          eventHandle.onUploadProgress(percentCompleted)
+          if (progressEvent.lengthComputable) {
+            const percentCompleted = Math.round(progressEvent.loaded / progressEvent.total * 100)
+            eventHandle.onUploadProgress(percentCompleted)
+          }
         }
       }
       eventHandle.onUploadStart()
       axios.post(targetUrl, formData, config)
         .then((res) => {
-          console.log(res)
-          eventHandle.onUploadSuccess
+          eventHandle.onUploadSuccess(file.name)
         })
         .catch((err) => {
           eventHandle.onUploadError(err)
         })
     })
   }
+
   const { getRootProps, getInputProps, isDragActive, isFocused } = useDropzone({ onDrop })
   const style = useMemo(() => ({
     ...(isDragActive ? activeStyle : {}),
@@ -81,6 +91,22 @@ const SftpUpload = ({ cid, current_path, eventHandle }: UploadProps) => {
   }), [
     isDragActive
   ]);
+
+  if (uploadStatus.isUploading) {
+    // uploading status
+    return (
+      <a className="overview-item upload-diabled" title={t('files:uploading') + ":"+ uploadStatus.percent + "%"}>
+        <DoubleChevronUpIcon size={32} className="item-icon" />
+        { uploadStatus.percent < 100 && 
+        <Strong size={300} className="item-title">
+          {t('files:uploading')} {":"} {uploadStatus.percent}{"%"}
+        </Strong>}
+        { uploadStatus.percent >= 100 && <Strong size={300} className="item-title">
+          {t('files:upload_completed')}
+        </Strong>}
+      </a>
+    )
+  }
 
   return (
     <a className="overview-item" {...getRootProps(style)}>

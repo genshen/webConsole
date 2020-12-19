@@ -12,6 +12,8 @@ export default {
     },
     files: {
       upload_btn: "上传文件",
+      uploading: "上传中",
+      upload_completed: "正在处理",
       upload_tooltip: '点击或拖拽文件至此以上传',
       error_upload_fail_no_conneton: '上传文件失败 (连接断开)',
       error_upload_fail_target_url: '上传失败 (获取上传地址错误)',
@@ -86,6 +88,8 @@ export default {
     },
     files: {
       upload_btn: "Upload",
+      uploading: "Uploading",
+      upload_completed: "Processing",
       upload_tooltip: 'Click or drag files here to upload',
       error_upload_fail_no_conneton: 'Upload failed due to lost connection',
       error_upload_fail_target_url: 'Upload failed while obtaining uploading address',

@@ -8,7 +8,7 @@ import Utils from "../libs/utils"
 import apiRouters from '../config/api_routers'
 import stringFormat from "../libs/string_format"
 import PathNav, { SPLIT_CHAR } from "./PathNav"
-import SftpUpload, { UploadEvent } from "./SftpUpload"
+import SftpUpload, { UploadEvent, UploadStatus } from "./SftpUpload"
 import './file_trans.less'
 
 const HOME = "HOME"
@@ -59,9 +59,10 @@ interface GridFileViewProps {
   fileUploading: boolean, // todo:
   onPathChanged: (item: FileItem[], path: string, is_abs_path: boolean) => void
   uploadEvent: UploadEvent
+  uploadStatus: UploadStatus
 }
 
-const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPathChanged, uploadEvent }: GridFileViewProps) => {
+const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPathChanged, uploadEvent, uploadStatus }: GridFileViewProps) => {
   const { t } = useTranslation(['console'])
 
   const onPath = (path: string) => {
@@ -145,7 +146,7 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
           }
         }
         )}
-        <SftpUpload eventHandle={uploadEvent} cid={sftpConnId} current_path={currentPath.current_path} />
+        <SftpUpload eventHandle={uploadEvent} uploadStatus={uploadStatus} cid={sftpConnId} current_path={currentPath.current_path} />
       </div>
     </Card>
   )
@@ -215,6 +216,7 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
   const [fileUploading, setFileUploading] = useState<boolean>(false)
   const [fileList, setFileList] = useState<Array<FileItem>>(DefaultFileList)
   const [currentPath, setCurentPath] = useState<CurrentPath>({ current_path: '', display_path: HOME })
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus>({ isUploading: false, hasError: false, percent: 0 })
 
   const { t } = useTranslation(['console'])
   // fixme: close websocket when isSftpActive changed to false
@@ -280,17 +282,22 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
   }
 
   const handleFileUploading = {
-    onUploadSuccess: () => {
-      return
+    onUploadSuccess: (filename: string) => {
+      const item = {path: currentPath+SPLIT_CHAR + filename, name: filename, is_dir: false,loading: false,children: [] }
+      setUploadStatus({isUploading: false, hasError: false, percent: 0})
+      setFileList(() => { return [...fileList, item] })
+      toaster.success("Upload success!")
     },
     onUploadStart: () => {
-      return
+      setUploadStatus({isUploading: true, hasError: false,  percent: 0})
     },
     onUploadProgress: (percent: number) => {
-      return
+      setUploadStatus({isUploading: true, hasError: false, percent: percent})
+      console.log(percent)
     },
     onUploadError: (e: Error) => {
-      return
+      setUploadStatus({isUploading: false, hasError: true, percent: 0})
+      toaster.danger("File upload error")
     }
   }
 
@@ -340,6 +347,7 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
             <GridFileView
               key="grid_view"
               uploadEvent={handleFileUploading}
+              uploadStatus={uploadStatus}
               fileList={fileList}
               sftpConnId={sftpConnId}
               currentPath={currentPath}
