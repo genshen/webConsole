@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { Alert, Button, Card, Heading, Pane, Paragraph, SideSheet, Strong, Tab, Tablist, toaster } from "evergreen-ui"
-import { FolderCloseIcon, DocumentIcon } from "evergreen-ui"
+import { Alert, Button, IconButton, Card, Heading, Menu, Pane, Paragraph, Popover, Position, SideSheet, Strong, Tab, Tablist, toaster } from "evergreen-ui"
+import { FolderCloseIcon, DocumentIcon, CogIcon, EyeOnIcon, EyeOffIcon } from "evergreen-ui"
 import { useTranslation } from "react-i18next"
 
 import Config from '../config/config'
@@ -63,7 +63,14 @@ interface GridFileViewProps {
 }
 
 const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPathChanged, uploadEvent, uploadStatus }: GridFileViewProps) => {
-  const { t } = useTranslation(['console'])
+  const { t } = useTranslation(['console', 'files'])
+  const strSettings = window.localStorage.getItem("show-hidden-files")
+  const [showHiddenFile, setShowHiddenFiles] = useState<boolean>(strSettings === 'on'? true: false)
+
+  const toggleShowHiddenFile = () => {
+    window.localStorage.setItem("show-hidden-files", !showHiddenFile? 'on' : 'off')
+    setShowHiddenFiles(!showHiddenFile)
+  }
 
   const onPath = (path: string) => {
     // when the path is changed // todo add cache
@@ -118,8 +125,25 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
       flexDirection="column"
       padding="8px"
     >
-      <Pane marginBottom="0.4rem" className="path-nav">
-        <PathNav path={ currentPath.current_path } onPathClick={onPath} />
+      <Pane marginBottom="0.4rem" className="path-nav" display="flex" flexDirection="row">
+        <div style={{flex: 1}}>
+          <PathNav path={ currentPath.current_path } onPathClick={onPath} />
+        </div>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={
+            <Menu>
+              <Menu.Group>
+                <Menu.Item icon={showHiddenFile? EyeOffIcon: EyeOnIcon} onSelect={toggleShowHiddenFile}>
+                  {/* secondaryText={<>⌘R</>} */}
+                  { showHiddenFile? t('files:hide_hidden_files_menu'): t('files:show_hidden_files_menu') }
+                </Menu.Item>
+              </Menu.Group>
+            </Menu>
+          }
+        >
+          <IconButton appearance="minimal" icon={CogIcon} iconSize={18} />
+        </Popover>
       </Pane>
       <div className="overview-group-items">
         {fileList.sort((a, b) => {
@@ -131,6 +155,9 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
           }
           return a.name == b.name ? 0 : a.name > b.name ? 1 : -1
         }).map((f: FileItem) => {
+          if(!showHiddenFile && f.name.startsWith('.')) {
+            return null
+          }
           // if (f.is_dir)
           if (f.is_dir) {
             return (
