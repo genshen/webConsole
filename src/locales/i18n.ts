@@ -10,13 +10,15 @@ const resources = {
     translation: translation['en-US'].global,
     home: translation['en-US'].index,
     console: translation['en-US'].console,
-    signin: translation['en-US'].signin
+    signin: translation['en-US'].signin,
+    files: translation['en-US'].files
   },
   'zh-CN': {
     translation: translation['zh-CN'].global,
     home: translation['zh-CN'].index,
     console: translation['zh-CN'].console,
-    signin: translation['zh-CN'].signin
+    signin: translation['zh-CN'].signin,
+    files: translation['zh-CN'].files
   },
 }
 

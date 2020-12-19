@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { Alert, Card, Heading, Pane, Paragraph, SideSheet, Strong, Tab, Tablist, toaster } from "evergreen-ui"
-import { FolderCloseIcon, DocumentIcon, UploadIcon } from "evergreen-ui"
+import { Alert, Button, Card, Heading, Pane, Paragraph, SideSheet, Strong, Tab, Tablist, toaster } from "evergreen-ui"
+import { FolderCloseIcon, DocumentIcon } from "evergreen-ui"
 import { useTranslation } from "react-i18next"
 
 import Config from '../config/config'
@@ -8,6 +8,7 @@ import Utils from "../libs/utils"
 import apiRouters from '../config/api_routers'
 import stringFormat from "../libs/string_format"
 import PathNav, { SPLIT_CHAR } from "./PathNav"
+import SftpUpload, { UploadEvent } from "./SftpUpload"
 import './file_trans.less'
 
 const HOME = "HOME"
@@ -57,9 +58,10 @@ interface GridFileViewProps {
   currentPath: CurrentPath,
   fileUploading: boolean, // todo:
   onPathChanged: (item: FileItem[], path: string, is_abs_path: boolean) => void
+  uploadEvent: UploadEvent
 }
 
-const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPathChanged }: GridFileViewProps) => {
+const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPathChanged, uploadEvent }: GridFileViewProps) => {
   const { t } = useTranslation(['console'])
 
   const onPath = (path: string) => {
@@ -143,10 +145,7 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
           }
         }
         )}
-        <a className="overview-item">
-          <UploadIcon size={32} className="item-icon" />
-          <Strong size={300} className="item-title">Upload</Strong>
-        </a>
+        <SftpUpload eventHandle={uploadEvent} cid={sftpConnId} current_path={currentPath.current_path} />
       </div>
     </Card>
   )
@@ -280,6 +279,21 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
     }
   }
 
+  const handleFileUploading = {
+    onUploadSuccess: () => {
+      return
+    },
+    onUploadStart: () => {
+      return
+    },
+    onUploadProgress: (percent: number) => {
+      return
+    },
+    onUploadError: (e: Error) => {
+      return
+    }
+  }
+
   return (
     <>
       <SideSheet
@@ -325,6 +339,7 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
           { sshStatus === ConnStatus.ConnectionAlive && isSftpActive &&
             <GridFileView
               key="grid_view"
+              uploadEvent={handleFileUploading}
               fileList={fileList}
               sftpConnId={sftpConnId}
               currentPath={currentPath}

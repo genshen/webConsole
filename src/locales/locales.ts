@@ -10,6 +10,12 @@ export default {
       welcome: "欢迎使用 SSH Web Console",
       goto_signin: "去往登录页面"
     },
+    files: {
+      upload_btn: "上传文件",
+      upload_tooltip: '点击或拖拽文件至此以上传',
+      error_upload_fail_no_conneton: '上传文件失败 (连接断开)',
+      error_upload_fail_target_url: '上传失败 (获取上传地址错误)',
+    },
     console: {
       file_transfer: {
         ssh_not_active: "ssh未连接,请先连接ssh",
@@ -18,7 +24,6 @@ export default {
         explore_files: "<b>浏览文件</b>:",
         error_while_ls: "获取目录<i>{dir}</i>信息错误",
         error_download_file: "下载文件 <i>{name}</i> 出错",
-        upload_btn: "上传",
         empty_dir_or_no_sub_dir: "空目录或无子目录",
         upload_status_pending: "正在处理",
         upload_status_uploading: "正在上传 {percent}%",
@@ -79,6 +84,12 @@ export default {
       welcome: "Welcome to SSH Web Console",
       goto_signin: "Go to Sign in Page"
     },
+    files: {
+      upload_btn: "Upload",
+      upload_tooltip: 'Click or drag files here to upload',
+      error_upload_fail_no_conneton: 'Upload failed due to lost connection',
+      error_upload_fail_target_url: 'Upload failed while obtaining uploading address',
+    },
     console: {
       file_transfer: {
         ssh_not_active: "ssh is not active, please login in ssh first.",
@@ -88,7 +99,6 @@ export default {
         explore_files: "<b>Explore Files</b>:",
         error_while_ls: "error happened while list directory <i>{dir}</i>",
         error_download_file: "error happened while download file <i>{name}</i>",
-        upload_btn: "Upload",
         empty_dir: "Empty Directory or no Sub Directories",
         upload_status_pending: "pending",
         upload_status_uploading: "uploading {percent}%",
