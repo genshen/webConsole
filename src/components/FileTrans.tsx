@@ -120,10 +120,11 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
     <Card
       backgroundColor="white"
       elevation={0}
-      minHeight="100%"
+      minHeight="calc(100% - 32px)"
       display="flex"
       flexDirection="column"
       padding="8px"
+      margin={16}
     >
       <Pane marginBottom="0.4rem" className="path-nav" display="flex" flexDirection="row">
         <div style={{flex: 1}}>
@@ -348,14 +349,16 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
             </Paragraph>
           </Pane>
         </Pane>
+        { (sshStatus !== ConnStatus.ConnectionAlive || !isSftpActive) &&
         <Pane flex="1" overflowY="scroll" background="tint1" padding={16}>
           { sshStatus !== ConnStatus.ConnectionAlive &&
-          <Alert
-            intent="warning"
-            title={t('console:file_transfer.ssh_not_active')}
-            marginBottom={32}
-          />}
-          { sshStatus === ConnStatus.ConnectionAlive && !isSftpActive &&
+            <Alert
+              intent="warning"
+              title={t('console:file_transfer.ssh_not_active')}
+              marginBottom={32}
+            />
+          }
+          {sshStatus === ConnStatus.ConnectionAlive && !isSftpActive &&
             <Pane
               backgroundColor="transparent"
               elevation={0}
@@ -370,7 +373,11 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
               </Button>
             </Pane>
           }
-          { sshStatus === ConnStatus.ConnectionAlive && isSftpActive &&
+        </Pane>
+        }
+        { sshStatus === ConnStatus.ConnectionAlive && isSftpActive &&
+          // use margin(in GridFileView), instead padding due to browser compatibility on firefox.
+          <Pane flex="1" overflowY="scroll" background="tint1">
             <GridFileView
               key="grid_view"
               uploadEvent={handleFileUploading}
@@ -381,8 +388,8 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
               fileUploading={fileUploading}
               onPathChanged={setGridByFilePath}
             />
-          }
-        </Pane>
+          </Pane>
+        }
       </SideSheet>
     </>
   )
