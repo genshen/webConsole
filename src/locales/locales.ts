@@ -19,6 +19,8 @@ export default {
       hide_hidden_files_menu: '不显示隐藏文件',
       error_upload_fail_no_conneton: '上传文件失败 (连接断开)',
       error_upload_fail_target_url: '上传失败 (获取上传地址错误)',
+      dl_text_preparing: '准备中...',
+      dl_file_failed: '下载文件失败',
     },
     console: {
       file_transfer: {
@@ -97,6 +99,8 @@ export default {
       upload_tooltip: 'Click or drag files here to upload',
       error_upload_fail_no_conneton: 'Upload failed due to lost connection',
       error_upload_fail_target_url: 'Upload failed while obtaining uploading address',
+      dl_text_preparing: 'Preparing',
+      dl_file_failed: 'Download file failded',
     },
     console: {
       file_transfer: {

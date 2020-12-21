@@ -9,6 +9,7 @@ import Utils from "../libs/utils"
 import apiRouters from '../config/api_routers'
 import stringFormat from "../libs/string_format"
 import "./sftp_upload.less"
+import "./file_trans.less"
 
 const activeStyle = {
   style: {
@@ -95,7 +96,7 @@ const SftpUpload = ({ cid, current_path, eventHandle, uploadStatus }: UploadProp
   if (uploadStatus.isUploading) {
     // uploading status
     return (
-      <a className="overview-item upload-diabled" title={t('files:uploading') + ":"+ uploadStatus.percent + "%"}>
+      <a className="overview-item overview-item-flex upload-diabled" title={t('files:uploading') + ":"+ uploadStatus.percent + "%"}>
         <DoubleChevronUpIcon size={32} className="item-icon" />
         { uploadStatus.percent < 100 && 
         <Strong size={300} className="item-title">
@@ -109,7 +110,7 @@ const SftpUpload = ({ cid, current_path, eventHandle, uploadStatus }: UploadProp
   }
 
   return (
-    <a className="overview-item" {...getRootProps(style)}>
+    <a className="overview-item overview-item-flex" {...getRootProps(style)}>
       <input {...getInputProps()} />
       <UploadIcon size={32} className="item-icon" />
       <Tooltip content={t('files:upload_tooltip')}>

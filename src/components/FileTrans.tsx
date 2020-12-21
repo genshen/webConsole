@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { Alert, Button, IconButton, Card, Heading, Menu, Pane, Paragraph, Popover, Position, SideSheet, Strong, Tab, Tablist, toaster } from "evergreen-ui"
+import { Alert, Button, IconButton, Card, Heading, Menu, Pane, Paragraph, Popover, Position, SideSheet, Strong, Tab, Tablist, toaster, Pill, Badge } from "evergreen-ui"
 import { FolderCloseIcon, DocumentIcon, CogIcon, EyeOnIcon, EyeOffIcon } from "evergreen-ui"
 import { useTranslation } from "react-i18next"
+import { saveAs } from "file-saver"
+import axios from "axios"
 
 import Config from '../config/config'
 import Utils from "../libs/utils"
@@ -52,6 +54,53 @@ const DefaultFileList: Array<FileItem> = [
   { name: HOME, path: '', is_dir: true, loading: false },
 ]
 
+type DownloadStatus = {
+  isDownloading: boolean
+  loaded: number
+  total: number
+  filename: string
+  path: string
+}
+
+type DownloadEvent = {
+  onDownloadStart: (path: string, filename: string) => void
+  onDownloadProgress: (loaded: number, total: number, path: string, filename: string) => void
+  onDownloadFinish: (path: string, filename: string) => void
+}
+
+interface DownloadingFileProps {
+  status: DownloadStatus
+  file: FileItem
+}
+
+const DownloadingFile = ({ status, file }: DownloadingFileProps) => {
+  const { t } = useTranslation(['files'])
+  let dataSize = '0';
+  let dataUnit = 'B';
+  if (status.loaded < 1024) {
+    dataSize = status.loaded + ''
+  } else if (status.loaded < 1024 * 1024) {
+    dataUnit = "KB"
+    dataSize = (status.loaded / 1024).toFixed(2)
+  } else if (status.loaded < 1024 * 1024 * 1024) {
+    dataUnit = "MB"
+    dataSize = (status.loaded / 1024 / 1024).toFixed(2)
+  } else {
+    dataUnit = "GB"
+    dataSize = (status.loaded / 1024 / 1024 / 1024).toFixed(2)
+  }
+  return (<a className="overview-item item-dl-container" title={file.name} >
+    <a className="dl-file-cover">
+      <Badge color="blue" marginBottom="0.2rem">{t('files:dl_text_preparing')}</Badge>
+      <Pill color="blue" isSolid>{dataSize} {' '} {dataUnit}</Pill>
+    </a>
+    <a className="dl-file-item">
+      <DocumentIcon size={32} className="item-icon" />
+      <Strong size={300} className="item-title"> {file.name} </Strong>
+    </a>
+  </a>)
+}
+
 interface GridFileViewProps {
   sftpConnId: string,
   fileList: Array<FileItem>
@@ -60,9 +109,12 @@ interface GridFileViewProps {
   onPathChanged: (item: FileItem[], path: string, is_abs_path: boolean) => void
   uploadEvent: UploadEvent
   uploadStatus: UploadStatus
+  dlStatus: DownloadStatus
+  dlEvent: DownloadEvent
 }
 
-const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPathChanged, uploadEvent, uploadStatus }: GridFileViewProps) => {
+const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading,
+  onPathChanged, uploadEvent, uploadStatus, dlEvent, dlStatus }: GridFileViewProps) => {
   const { t } = useTranslation(['console', 'files'])
   const strSettings = window.localStorage.getItem("show-hidden-files")
   const [showHiddenFile, setShowHiddenFiles] = useState<boolean>(strSettings === 'on'? true: false)
@@ -99,19 +151,47 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
     }
   }
 
+  const getFileBlob = (url: string, onDlProgress: (progressEvent: any) => void) => {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      axios({
+        method: 'get',
+        url,
+        responseType: 'arraybuffer',
+        onDownloadProgress: onDlProgress,
+      }).then(data => {
+        resolve(data.data)
+      }).catch(error => {
+        reject(error.toString())
+      })
+    })
+  }
+
   const onGridItemClicked = (fileItem: FileItem) => {
     if (!fileItem.is_dir) {
       const path = fileItem.path;
       const _t = sessionStorage.getItem(Config.jwt.tokenName);
       if (_t) {
-        window.open(
-          Utils.loadUrl(
-            apiRouters.router.sftp_dl,
-            stringFormat.format(apiRouters.params.sftp_dl, _t, sftpConnId, path)
-          ),
-          "_self",
-          'false'
-        );
+        const dlUrl = Utils.loadUrl(
+          apiRouters.router.sftp_dl,
+          stringFormat.format(apiRouters.params.sftp_dl, _t, sftpConnId, path)
+        )
+        dlEvent.onDownloadStart(currentPath.current_path, fileItem.name)
+        getFileBlob(dlUrl, (progressEvent: any) => {
+          // on download progress event
+          if (progressEvent.lengthComputable) {
+            dlEvent.onDownloadProgress(progressEvent.loaded, progressEvent.total, currentPath.current_path, fileItem.name)
+          } else {
+            dlEvent.onDownloadProgress(progressEvent.loaded, 0, currentPath.current_path, fileItem.name)
+          }
+        }).then((buffer: ArrayBuffer) => {
+          dlEvent.onDownloadFinish(currentPath.current_path, fileItem.name)
+          const blob = new Blob([buffer], { type: 'application/octet-stream' })
+          saveAs(blob, fileItem.name)
+        }).catch(() => {
+          // download error
+          toaster.danger(t("files:dl_file_failed"))
+          dlEvent.onDownloadFinish(currentPath.current_path, fileItem.name)
+        })
       }
     }
   }
@@ -162,12 +242,16 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading, onPath
           // if (f.is_dir)
           if (f.is_dir) {
             return (
-              <a className="overview-item" onDoubleClick={() => { onGridFileDoubleClicked(f) }}>
+              <a className="overview-item overview-item-flex" onDoubleClick={() => { onGridFileDoubleClicked(f) }}>
                 <FolderCloseIcon size={32} className="item-icon" />
                 <Strong size={300} title={f.name} className="item-title"> {f.name} </Strong>
               </a>)
           } else {
-            return (<a className="overview-item" onClick={() => { onGridItemClicked(f) }}>
+            // file
+            if (dlStatus.isDownloading && dlStatus.filename === f.name && dlStatus.path === currentPath.current_path) {
+              return <DownloadingFile status={dlStatus} file={f} />
+            }
+            return (<a className="overview-item overview-item-flex" onClick={() => { onGridItemClicked(f) }}>
               <DocumentIcon size={32} className="item-icon" />
               <Strong size={300} title={f.name} className="item-title"> {f.name} </Strong>
             </a>)
@@ -245,6 +329,7 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
   const [fileList, setFileList] = useState<Array<FileItem>>(DefaultFileList)
   const [currentPath, setCurentPath] = useState<CurrentPath>({ current_path: '', display_path: HOME })
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>({ isUploading: false, hasError: false, percent: 0 })
+  const [dlStatus, setDlStatus] = useState<DownloadStatus>({ isDownloading: false, loaded: 0, total: 0, path: '', filename: '' })
 
   const { t } = useTranslation(['console'])
   // fixme: close websocket when isSftpActive changed to false
@@ -329,6 +414,18 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
     }
   }
 
+  const handleFileDownload = {
+    onDownloadStart: (path: string, filename: string) => {
+      setDlStatus({ isDownloading: true, loaded: 0, total: 0, path: path, filename: filename })
+    },
+    onDownloadProgress: (loaded: number, total: number, path: string, filename: string) => {
+      setDlStatus({ isDownloading: true, loaded: loaded, total: total, path: path, filename: filename })
+    },
+    onDownloadFinish: (path: string, filename: string) => {
+      setDlStatus({ isDownloading: false, loaded: 0, total: 0, path: '', filename: '' })
+    }
+  }
+
   return (
     <>
       <SideSheet
@@ -382,6 +479,8 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
               key="grid_view"
               uploadEvent={handleFileUploading}
               uploadStatus={uploadStatus}
+              dlEvent={handleFileDownload}
+              dlStatus={dlStatus}
               fileList={fileList}
               sftpConnId={sftpConnId}
               currentPath={currentPath}
