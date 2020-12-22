@@ -52,9 +52,10 @@
 
 .overview-group-items {
     display: inline-grid;
-    grid-template-columns: repeat(auto-fill, 90px);
-    // grid-template-columns: repeat(auto-fill, 10px);
-    grid-template-rows: repeat(auto-fill, 72px);
+    grid-template-columns: repeat(auto-fill, 88px);
+    // see https://stackoverflow.com/q/62655660/10068476
+    // grid-template-rows: repeat(auto-fill, 64px);
+    grid-auto-rows: 72px;
     row-gap: 8px;
     column-gap: 8px;
 }

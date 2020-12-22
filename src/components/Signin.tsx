@@ -273,6 +273,7 @@ const Signin = (props: RouteComponentProps) => {
               type="submit"
               width="100%"
               appearance="primary"
+              justifyContent="center"
               intent="success"
               iconBefore={GeolocationIcon}>
               {t('signin:form_submit_btn')}
