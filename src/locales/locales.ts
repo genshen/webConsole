@@ -57,6 +57,7 @@ export default {
       ecs_to_exit_fullscreen: '按 <b>ESC</b> 键以退出全屏模式',
       modal_file_transfer_title: '文件传输',
       modal_file_transfer_ok_btn: '完成',
+      make_sure_to_leave: '确定要离开吗?',
     },
     signin: {
       form_title: '登录 SSH Web Console',
@@ -139,6 +140,7 @@ export default {
       ecs_to_exit_fullscreen: 'Press <b>ESC</b> key to exit fullscreen mode.',
       modal_file_transfer_title: 'File Transfer',
       modal_file_transfer_ok_btn: 'Finish',
+      make_sure_to_leave: 'Are sure to close this session?',
     },
     signin: {
       form_title: 'Sign In SSH Web Console',

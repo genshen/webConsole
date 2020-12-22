@@ -167,11 +167,17 @@ const Console = (props: RouteComponentProps) => {
   const onWindowResize = () => {
     fitAddon.fit()
   }
+  const closeWindowListener = (ev: BeforeUnloadEvent) => {
+    ev.preventDefault()
+    ev.returnValue = t('console:make_sure_to_leave')
+  }
 
   useEffect(() => {
     window.addEventListener('resize', onWindowResize)
+    window.addEventListener('beforeunload', closeWindowListener)
     return () => {
       window.removeEventListener('resize', onWindowResize)
+      window.removeEventListener('beforeunload', closeWindowListener)
     }
   }, [])
 
