@@ -1,7 +1,7 @@
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import Console from './components/Console';
-import Home from './components/Home';
+import React from 'react'
+import { Route, Switch } from 'react-router-dom'
+import Console from './components/Console'
+import Home from './components/Home'
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         <Route path="/" component={Home} />
       </Switch>
     </div>
-  );
+  )
 }
 
 export default App

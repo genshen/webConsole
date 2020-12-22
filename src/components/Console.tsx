@@ -1,7 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Pane, Text, Heading, Badge, Menu, Popover, Position, Avatar, Portal, Button, toaster, CornerDialog } from 'evergreen-ui'
-import { FullCircleIcon, UngroupObjectsIcon, RefreshIcon, SwapVerticalIcon, FullscreenIcon, LogOutIcon, CogIcon, ErrorIcon, DisableIcon } from 'evergreen-ui'
-import { RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  Pane,
+  Text,
+  Heading,
+  Badge,
+  Menu,
+  Popover,
+  Position,
+  Avatar,
+  Portal,
+  Button,
+  toaster,
+  CornerDialog,
+} from 'evergreen-ui'
+import {
+  FullCircleIcon,
+  UngroupObjectsIcon,
+  RefreshIcon,
+  SwapVerticalIcon,
+  FullscreenIcon,
+  LogOutIcon,
+  CogIcon,
+  ErrorIcon,
+  DisableIcon,
+} from 'evergreen-ui'
+import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { FitAddon } from 'xterm-addon-fit'
 
@@ -10,13 +33,12 @@ import theme from './term/term_theme'
 import FileTrans, { NodeConfig, ConnStatus } from './FileTrans'
 import sshWebSocket from '../libs/sshwebsocket'
 import terminalResize from '../libs/terminal-resize'
-import Util from "../libs/utils"
+import Util from '../libs/utils'
 import apiRouters from '../config/api_routers'
 import Config from '../config/config'
 import stringFormat from '../libs/string_format'
 
 import './console.less'
-
 
 type ConnStatusProps = {
   host: string
@@ -27,7 +49,12 @@ const ConnectionStatus = (props: ConnStatusProps) => {
   if (props.status === ConnStatus.Connecting) {
     return (
       <>
-        <UngroupObjectsIcon verticalAlign="baseline" size={10} color="info" marginRight={8} />
+        <UngroupObjectsIcon
+          verticalAlign="baseline"
+          size={10}
+          color="info"
+          marginRight={8}
+        />
         <Badge isInteractive textTransform="lowercase" color="blue">
           waiting connection
         </Badge>
@@ -36,7 +63,12 @@ const ConnectionStatus = (props: ConnStatusProps) => {
   } else if (props.status === ConnStatus.ConnectionLost) {
     return (
       <>
-        <DisableIcon verticalAlign="baseline" size={10} color="#FAE2E2" marginRight={8} />
+        <DisableIcon
+          verticalAlign="baseline"
+          size={10}
+          color="#FAE2E2"
+          marginRight={8}
+        />
         <Badge isInteractive color="red">
           connection lost
         </Badge>
@@ -45,7 +77,12 @@ const ConnectionStatus = (props: ConnStatusProps) => {
   } else {
     return (
       <>
-        <FullCircleIcon verticalAlign="baseline" size={10} color="success" marginRight={8} />
+        <FullCircleIcon
+          verticalAlign="baseline"
+          size={10}
+          color="success"
+          marginRight={8}
+        />
         <Badge isInteractive textTransform="lowercase" color="green">
           {props.host}
         </Badge>
@@ -59,15 +96,20 @@ const Console = (props: RouteComponentProps) => {
   const terminalRef = useRef<XTerm>(null)
   const { t } = useTranslation(['translation', 'console'])
   const [fitAddon] = useState<FitAddon>(new FitAddon())
-  const [connecting, setConnecting] = useState<ConnStatus>(ConnStatus.Connecting)
-  const [nodeConfig, setNodeConfig] = useState<NodeConfig>({ host: "waiting connection", username: 'Loading' })
+  const [connecting, setConnecting] = useState<ConnStatus>(
+    ConnStatus.Connecting,
+  )
+  const [nodeConfig, setNodeConfig] = useState<NodeConfig>({
+    host: 'waiting connection',
+    username: 'Loading',
+  })
   const [showCornerDialog, setShowCornerDialog] = useState<boolean>(false)
 
   let ws: WebSocket | null = null
 
   useEffect(() => {
-    const lhost = window.localStorage.getItem("user.host")
-    const luname = window.localStorage.getItem("user.username")
+    const lhost = window.localStorage.getItem('user.host')
+    const luname = window.localStorage.getItem('user.username')
     if (lhost === null) {
       return
     }
@@ -85,8 +127,8 @@ const Console = (props: RouteComponentProps) => {
 
     const _t = sessionStorage.getItem(Config.jwt.tokenName)
     if (_t === null) {
-      toaster.danger(t("console:web_socket_expire"))
-      // setConnecting(ConnStatus.ConnectionLost) 
+      toaster.danger(t('console:web_socket_expire'))
+      // setConnecting(ConnStatus.ConnectionLost)
       props.history.push('/signin')
       return
     }
@@ -98,17 +140,17 @@ const Console = (props: RouteComponentProps) => {
           apiRouters.params.ws_ssh,
           term.cols + '',
           term.rows + '',
-          _t
-        )
-      )
+          _t,
+        ),
+      ),
     )
     ws.onopen = () => {
       setConnecting(ConnStatus.ConnectionAlive)
     }
 
     ws.onclose = () => {
-      term.setOption("cursorBlink", false);
-      sessionStorage.removeItem(Config.jwt.tokenName);
+      term.setOption('cursorBlink', false)
+      sessionStorage.removeItem(Config.jwt.tokenName)
       setConnecting(ConnStatus.ConnectionLost)
       setShowCornerDialog(true)
     }
@@ -126,8 +168,8 @@ const Console = (props: RouteComponentProps) => {
     fitAddon.fit()
   }
 
-  useEffect (()=> {
-    window.addEventListener("resize", onWindowResize);
+  useEffect(() => {
+    window.addEventListener('resize', onWindowResize)
     return () => {
       window.removeEventListener('resize', onWindowResize)
     }
@@ -135,9 +177,21 @@ const Console = (props: RouteComponentProps) => {
 
   return (
     <Pane height="100vh" display="flex" flexDirection="column" borderRadius={3}>
-      <Pane display="flex" flexDirection="row" alignItems="center" background="rgba(27,33,47,0.86)">
-        <Heading padding={18} color="white"> {t('title')}</Heading>
-        <Pane padding={18} flex={1} alignItems="center" alignContent="center" textAlign="center">
+      <Pane
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        background="rgba(27,33,47,0.86)">
+        <Heading padding={18} color="white">
+          {' '}
+          {t('title')}
+        </Heading>
+        <Pane
+          padding={18}
+          flex={1}
+          alignItems="center"
+          alignContent="center"
+          textAlign="center">
           <ConnectionStatus status={connecting} host={nodeConfig.host} />
         </Pane>
         <Popover
@@ -145,7 +199,9 @@ const Console = (props: RouteComponentProps) => {
           content={
             <Menu>
               <Menu.Group>
-                <Menu.Item>{'@'} {nodeConfig.username} </Menu.Item>
+                <Menu.Item>
+                  {'@'} {nodeConfig.username}{' '}
+                </Menu.Item>
               </Menu.Group>
               <Menu.Divider />
               <Menu.Group>
@@ -154,9 +210,14 @@ const Console = (props: RouteComponentProps) => {
                 </Menu.Item>
               </Menu.Group>
             </Menu>
-          }
-        >
-          <Avatar isSolid name={nodeConfig.username} size={36} marginRight={36} cursor="pointer" />
+          }>
+          <Avatar
+            isSolid
+            name={nodeConfig.username}
+            size={36}
+            marginRight={36}
+            cursor="pointer"
+          />
         </Popover>
       </Pane>
       <Pane flex={1}>
@@ -178,7 +239,8 @@ const Console = (props: RouteComponentProps) => {
           sshStatus={connecting}
           hideSideSheeeet={() => {
             setSideSheetShwon(false)
-          }} />
+          }}
+        />
         <Button intent="success" onClick={() => setSideSheetShwon(true)}>
           SFTP
         </Button>
@@ -191,7 +253,8 @@ const Console = (props: RouteComponentProps) => {
       <CornerDialog
         title={
           <Text size={500} color="danger" alignItems="center" display="flex">
-            <ErrorIcon marginRight="0.2rem" /> {t("console:ssh_disconn_dialog_title")}
+            <ErrorIcon marginRight="0.2rem" />{' '}
+            {t('console:ssh_disconn_dialog_title')}
           </Text>
         }
         isShown={showCornerDialog}
@@ -202,8 +265,7 @@ const Console = (props: RouteComponentProps) => {
           props.history.push('/signin')
         }}
         containerProps={{ zIndex: 10 }}
-        onCloseComplete={() => setShowCornerDialog(false)}
-      >
+        onCloseComplete={() => setShowCornerDialog(false)}>
         {t('console:ssh_disconn_dialog_text')}
       </CornerDialog>
       <Portal>
@@ -221,7 +283,11 @@ const Console = (props: RouteComponentProps) => {
           <Button appearance="minimal" marginY={8} className="toolbar-item">
             <RefreshIcon color="white" size={10} />
           </Button>
-          <Button appearance="minimal" marginY={8} className="toolbar-item" onClick={() => setSideSheetShwon(true)}>
+          <Button
+            appearance="minimal"
+            marginY={8}
+            className="toolbar-item"
+            onClick={() => setSideSheetShwon(true)}>
             <SwapVerticalIcon color="white" size={10} />
           </Button>
           <Button appearance="minimal" marginY={8} className="toolbar-item">
@@ -233,7 +299,7 @@ const Console = (props: RouteComponentProps) => {
         </Pane>
       </Portal>
     </Pane>
-  );
+  )
 }
 
 export default Console

@@ -1,5 +1,5 @@
-import React from "react"
-import { Button, HomeIcon, SlashIcon } from "evergreen-ui"
+import React from 'react'
+import { Button, HomeIcon, SlashIcon } from 'evergreen-ui'
 
 export const SPLIT_CHAR = '/'
 
@@ -33,28 +33,46 @@ const PathNav = ({ path, onPathClick }: PathNavProps) => {
   }
   return (
     <>
-      { is_abs_path && (
-        <Button onClick={() => onItemClicked(-1)} height={24} paddingLeft="4px" paddingRight="4px" appearance="minimal" intent="none">
+      {is_abs_path && (
+        <Button
+          onClick={() => onItemClicked(-1)}
+          height={24}
+          paddingLeft="4px"
+          paddingRight="4px"
+          appearance="minimal"
+          intent="none">
           <SlashIcon />
         </Button>
       )}
-      { !is_abs_path && (
+      {!is_abs_path && (
         <>
-          <Button onClick={() => onItemClicked(-1)} height={24} paddingLeft="4px" paddingRight="4px" appearance="minimal" intent="none">
+          <Button
+            onClick={() => onItemClicked(-1)}
+            height={24}
+            paddingLeft="4px"
+            paddingRight="4px"
+            appearance="minimal"
+            intent="none">
             <HomeIcon />
           </Button>
         </>
       )}
-      { dirs.map((dir, i) => {
+      {dirs.map((dir, i) => {
         return (
           <>
-            <span style={{ fontSize: "12px" }}>{SPLIT_CHAR}</span>
-            <Button onClick={() => onItemClicked(i)} height={24} paddingLeft="4px" paddingRight="4px" appearance="minimal" intent="none">
+            <span style={{ fontSize: '12px' }}>{SPLIT_CHAR}</span>
+            <Button
+              onClick={() => onItemClicked(i)}
+              height={24}
+              paddingLeft="4px"
+              paddingRight="4px"
+              appearance="minimal"
+              intent="none">
               {dir}
             </Button>
-          </>)
-      })
-      }
+          </>
+        )
+      })}
     </>
   )
 }
