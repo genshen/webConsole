@@ -67,6 +67,7 @@ const SftpUpload = ({ cid, current_path, eventHandle, uploadStatus }: UploadProp
       formData.append('file', file, file.name)
 
       const config = {
+        // eslint-disable-next-line
         onUploadProgress: (progressEvent: any) => {
           if (progressEvent.lengthComputable) {
             const percentCompleted = Math.round(progressEvent.loaded / progressEvent.total * 100)
@@ -76,7 +77,7 @@ const SftpUpload = ({ cid, current_path, eventHandle, uploadStatus }: UploadProp
       }
       eventHandle.onUploadStart()
       axios.post(targetUrl, formData, config)
-        .then((res) => {
+        .then( () => {
           eventHandle.onUploadSuccess(file.name)
         })
         .catch((err) => {

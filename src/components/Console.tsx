@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Pane, Text, Heading, Badge, Menu, Popover, Position, Avatar, Tab, Portal, Tablist, Button, SideSheet, Paragraph, Card, toaster, CornerDialog } from 'evergreen-ui'
+import { Pane, Text, Heading, Badge, Menu, Popover, Position, Avatar, Portal, Button, toaster, CornerDialog } from 'evergreen-ui'
 import { FullCircleIcon, UngroupObjectsIcon, RefreshIcon, SwapVerticalIcon, FullscreenIcon, LogOutIcon, CogIcon, ErrorIcon, DisableIcon } from 'evergreen-ui'
 import { RouteComponentProps } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
@@ -58,7 +58,7 @@ const Console = (props: RouteComponentProps) => {
   const [isSideSheetShown, setSideSheetShwon] = useState<boolean>(false)
   const terminalRef = useRef<XTerm>(null)
   const { t } = useTranslation(['translation', 'console'])
-  const [fitAddon, setFitAddon] = useState<FitAddon>(new FitAddon())
+  const [fitAddon] = useState<FitAddon>(new FitAddon())
   const [connecting, setConnecting] = useState<ConnStatus>(ConnStatus.Connecting)
   const [nodeConfig, setNodeConfig] = useState<NodeConfig>({ host: "waiting connection", username: 'Loading' })
   const [showCornerDialog, setShowCornerDialog] = useState<boolean>(false)

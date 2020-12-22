@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { NavLink, Route, Switch } from 'react-router-dom';
 import { Button, Pane, Heading } from 'evergreen-ui';
 import { useTranslation } from 'react-i18next'
 
@@ -30,7 +30,6 @@ const MainPage = () => {
 }
 
 const Home = () => {
-  const { path } = useRouteMatch()
   return (
     <div className="home-container" >
       <header className="home-content-header">

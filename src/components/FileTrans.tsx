@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { Alert, Button, IconButton, Card, Heading, Menu, Pane, Paragraph, Popover, Position, SideSheet, Strong, Tab, Tablist, toaster, Pill, Badge } from "evergreen-ui"
+import React, { useState } from "react"
+import { Alert, Button, IconButton, Card, Heading, Menu, Pane, Paragraph, Popover, Position, SideSheet, Strong, toaster, Pill, Badge } from "evergreen-ui"
 import { FolderCloseIcon, DocumentIcon, CogIcon, EyeOnIcon, EyeOffIcon } from "evergreen-ui"
 import { useTranslation } from "react-i18next"
 import { saveAs } from "file-saver"
@@ -19,10 +19,6 @@ export enum ConnStatus {
   Connecting = 1,
   ConnectionAlive,
   ConnectionLost,
-}
-
-interface SiderSftpState {
-  selectedIndex: number
 }
 
 type FileItem = {
@@ -105,7 +101,6 @@ interface GridFileViewProps {
   sftpConnId: string,
   fileList: Array<FileItem>
   currentPath: CurrentPath,
-  fileUploading: boolean, // todo:
   onPathChanged: (item: FileItem[], path: string, is_abs_path: boolean) => void
   uploadEvent: UploadEvent
   uploadStatus: UploadStatus
@@ -113,14 +108,14 @@ interface GridFileViewProps {
   dlEvent: DownloadEvent
 }
 
-const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading,
-  onPathChanged, uploadEvent, uploadStatus, dlEvent, dlStatus }: GridFileViewProps) => {
+const GridFileView = ({ sftpConnId, fileList, currentPath, onPathChanged,
+  uploadEvent, uploadStatus, dlEvent, dlStatus }: GridFileViewProps) => {
   const { t } = useTranslation(['console', 'files'])
   const strSettings = window.localStorage.getItem("show-hidden-files")
-  const [showHiddenFile, setShowHiddenFiles] = useState<boolean>(strSettings === 'on'? true: false)
+  const [showHiddenFile, setShowHiddenFiles] = useState<boolean>(strSettings === 'on' ? true : false)
 
   const toggleShowHiddenFile = () => {
-    window.localStorage.setItem("show-hidden-files", !showHiddenFile? 'on' : 'off')
+    window.localStorage.setItem("show-hidden-files", !showHiddenFile ? 'on' : 'off')
     setShowHiddenFiles(!showHiddenFile)
   }
 
@@ -129,7 +124,7 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading,
     if (path && path === currentPath.current_path) {
       return // if it is the same path.
     }
-    if (fileUploading) { // todo: fileUploading
+    if (uploadStatus.isUploading) {
       // if it is uploading.
       toaster.danger(t("console:file_transfer.wait_for_unload_finish"));
       return;
@@ -151,6 +146,7 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading,
     }
   }
 
+  // eslint-disable-next-line
   const getFileBlob = (url: string, onDlProgress: (progressEvent: any) => void) => {
     return new Promise<ArrayBuffer>((resolve, reject) => {
       axios({
@@ -176,6 +172,7 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading,
           stringFormat.format(apiRouters.params.sftp_dl, _t, sftpConnId, path)
         )
         dlEvent.onDownloadStart(currentPath.current_path, fileItem.name)
+        // eslint-disable-next-line
         getFileBlob(dlUrl, (progressEvent: any) => {
           // on download progress event
           if (progressEvent.lengthComputable) {
@@ -207,17 +204,17 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading,
       margin={16}
     >
       <Pane marginBottom="0.4rem" className="path-nav" display="flex" flexDirection="row">
-        <div style={{flex: 1}}>
-          <PathNav path={ currentPath.current_path } onPathClick={onPath} />
+        <div style={{ flex: 1 }}>
+          <PathNav path={currentPath.current_path} onPathClick={onPath} />
         </div>
         <Popover
           position={Position.BOTTOM_LEFT}
           content={
             <Menu>
               <Menu.Group>
-                <Menu.Item icon={showHiddenFile? EyeOffIcon: EyeOnIcon} onSelect={toggleShowHiddenFile}>
+                <Menu.Item icon={showHiddenFile ? EyeOffIcon : EyeOnIcon} onSelect={toggleShowHiddenFile}>
                   {/* secondaryText={<>⌘R</>} */}
-                  { showHiddenFile? t('files:hide_hidden_files_menu'): t('files:show_hidden_files_menu') }
+                  {showHiddenFile ? t('files:hide_hidden_files_menu') : t('files:show_hidden_files_menu')}
                 </Menu.Item>
               </Menu.Group>
             </Menu>
@@ -236,10 +233,10 @@ const GridFileView = ({ sftpConnId, fileList, currentPath, fileUploading,
           }
           return a.name == b.name ? 0 : a.name > b.name ? 1 : -1
         }).map((f: FileItem) => {
-          if(!showHiddenFile && f.name.startsWith('.')) {
+          if (!showHiddenFile && f.name.startsWith('.')) {
             return null
           }
-          // if (f.is_dir)
+
           if (f.is_dir) {
             return (
               <a className="overview-item overview-item-flex" onDoubleClick={() => { onGridFileDoubleClicked(f) }}>
@@ -296,6 +293,7 @@ const lsCmd = (sftpConnId: string, dir_only: boolean, item: FileItem, ls_error: 
           } else {
             const messages = response.data.message;
             const children: Array<FileItem> = [];
+            // eslint-disable-next-line
             messages.forEach((ele: any) => {
               if (dir_only && !ele.is_dir) {
                 return
@@ -325,7 +323,6 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
   const [sftpConnLoading, setSftpConnLoading] = useState<boolean>(false)
   const [sftpConnId, setSftpConnId] = useState<string>('')
 
-  const [fileUploading, setFileUploading] = useState<boolean>(false)
   const [fileList, setFileList] = useState<Array<FileItem>>(DefaultFileList)
   const [currentPath, setCurentPath] = useState<CurrentPath>({ current_path: '', display_path: HOME })
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>({ isUploading: false, hasError: false, percent: 0 })
@@ -334,10 +331,11 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
   const { t } = useTranslation(['console'])
   // fixme: close websocket when isSftpActive changed to false
 
+  // eslint-disable-next-line
   const ls = (item: FileItem, callback: (items: FileItem[], error: boolean) => void) => {
     lsCmd(sftpConnId, true, item, (path: string) => {
         toaster.danger(t("console:file_transfer.error_while_ls", { dir: path }))
-      },(children: FileItem[], error: boolean) => {
+    }, (children: FileItem[], error: boolean) => {
       // todo empty-text
       if (!error && children.length === 0) {
         // remove expand icon.
@@ -396,20 +394,20 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
 
   const handleFileUploading = {
     onUploadSuccess: (filename: string) => {
-      const item = {path: currentPath+SPLIT_CHAR + filename, name: filename, is_dir: false,loading: false,children: [] }
-      setUploadStatus({isUploading: false, hasError: false, percent: 0})
+      const item = { path: currentPath + SPLIT_CHAR + filename, name: filename, is_dir: false, loading: false, children: [] }
+      setUploadStatus({ isUploading: false, hasError: false, percent: 0 })
       setFileList(() => { return [...fileList, item] })
       toaster.success("Upload success!")
     },
     onUploadStart: () => {
-      setUploadStatus({isUploading: true, hasError: false,  percent: 0})
+      setUploadStatus({ isUploading: true, hasError: false, percent: 0 })
     },
     onUploadProgress: (percent: number) => {
-      setUploadStatus({isUploading: true, hasError: false, percent: percent})
+      setUploadStatus({ isUploading: true, hasError: false, percent: percent })
       console.log(percent)
     },
-    onUploadError: (e: Error) => {
-      setUploadStatus({isUploading: false, hasError: true, percent: 0})
+    onUploadError: () => {
+      setUploadStatus({ isUploading: false, hasError: true, percent: 0 })
       toaster.danger("File upload error")
     }
   }
@@ -421,7 +419,7 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
     onDownloadProgress: (loaded: number, total: number, path: string, filename: string) => {
       setDlStatus({ isDownloading: true, loaded: loaded, total: total, path: path, filename: filename })
     },
-    onDownloadFinish: (path: string, filename: string) => {
+    onDownloadFinish: () => {
       setDlStatus({ isDownloading: false, loaded: 0, total: 0, path: '', filename: '' })
     }
   }
@@ -446,9 +444,9 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
             </Paragraph>
           </Pane>
         </Pane>
-        { (sshStatus !== ConnStatus.ConnectionAlive || !isSftpActive) &&
+        {(sshStatus !== ConnStatus.ConnectionAlive || !isSftpActive) &&
         <Pane flex="1" overflowY="scroll" background="tint1" padding={16}>
-          { sshStatus !== ConnStatus.ConnectionAlive &&
+            {sshStatus !== ConnStatus.ConnectionAlive &&
             <Alert
               intent="warning"
               title={t('console:file_transfer.ssh_not_active')}
@@ -472,7 +470,7 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
           }
         </Pane>
         }
-        { sshStatus === ConnStatus.ConnectionAlive && isSftpActive &&
+        {sshStatus === ConnStatus.ConnectionAlive && isSftpActive &&
           // use margin(in GridFileView), instead padding due to browser compatibility on firefox.
           <Pane flex="1" overflowY="scroll" background="tint1">
             <GridFileView
@@ -484,7 +482,6 @@ const FileTrans = ({ isShown, node, sshStatus, hideSideSheeeet }: SideSftpProps)
               fileList={fileList}
               sftpConnId={sftpConnId}
               currentPath={currentPath}
-              fileUploading={fileUploading}
               onPathChanged={setGridByFilePath}
             />
           </Pane>
