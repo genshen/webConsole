@@ -1,6 +1,6 @@
 # sshWebConsole
 
-frontend code of genshen/sshWebConsole
+frontend code of genshen/ssh-web-console
 
 ## Project setup
 ```
@@ -9,17 +9,17 @@ yarn install
 
 ### Compiles and hot-reloads for development
 ```
-yarn run serve
+yarn start
 ```
 
 ### Compiles and minifies for production
 ```
-yarn run build
+yarn build
 ```
 
 ### Run your tests
 ```
-yarn run test
+yarn test
 ```
 
 ### Lints and fixes files
@@ -31,6 +31,3 @@ yarn run lint
 ```
 yarn run test:unit
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

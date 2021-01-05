@@ -1,0 +1,46 @@
+.term-container {
+    height: 100%;
+    background-color: #1b212f;
+}
+
+.term-container.fullscreen {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+    z-index: 9;
+}
+
+.toolbar .toolbar-item {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.toolbar .toolbar-item:not(:first-child):not(:last-child) {
+    border-radius: 0;
+}
+.toolbar>.toolbar-item:first-child:not(:last-child) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.toolbar>.toolbar-item:last-child:not(:first-child) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.toolbar .toolbar-item:hover {
+    background-color: #57a3f3 !important;
+    border-color: #57a3f3 !important;
+}
+
+.toolbar .toolbar-item:active{
+    background-color: #2b85e4 !important;
+    border-color: #2b85e4 !important;
+}
+
+.toolbar .toolbar-item:focus  {
+    background-color: #2d8cf0 !important;
+    border-color: #2d8cf0 !important;
+}

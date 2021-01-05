@@ -1,0 +1,51 @@
+.focus-ring-link,
+.focus-ring-link:hover,
+.focus-ring-link:visited,
+.focus-ring-link:active {
+  text-decoration: none;
+  color: #234361;
+}
+
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content-container,
+.main-content-container-fluid {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .main-content-container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .main-content-container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .main-content-container {
+    width: 1170px;
+  }
+}
+
+.home-content-header {
+}
+.home-content-main {
+  flex-grow: 1;
+  padding-top: 8px;
+}
+.home-content-footer {
+}
+
+.App-logo {
+  height: 28vmin;
+  pointer-events: none;
+}

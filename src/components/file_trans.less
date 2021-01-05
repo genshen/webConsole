@@ -1,0 +1,103 @@
+.path-nav {
+  overflow-x: scroll;
+}
+
+.overview-item-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+}
+
+.overview-item {
+  background-color:#F9F9FB;
+  color: #425A70;
+//   margin: 4px;
+  padding: 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  .item-title {
+    width: 4.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+   }
+  .item-icon {
+    color: rgba(5, 124, 235, 0.877);
+    //  #2d8cf0
+    margin-bottom: 6px;
+  }
+  &:hover {
+    // margin: -4px;
+    // padding: 4px;
+    background-color: rgba(1, 108, 209, 0.079);
+    color: #1070CA;
+  }
+
+  &:focus-visible {
+    // margin: -4px;
+    // padding: 4px;
+    box-shadow: 0 0 0 2px rgba(1, 108, 209, 0.699);
+  }
+
+  &:active {
+    // margin: -4px;
+    // padding: 4px;
+    background-color: rgba(16, 112, 202, 0.14);
+    color: #DDEBF7;
+    box-shadow: 0 0 0 2px #016cd1;
+  }
+}
+
+.overview-group-items {
+    display: inline-grid;
+    grid-template-columns: repeat(auto-fill, 88px);
+    // see https://stackoverflow.com/q/62655660/10068476
+    // grid-template-rows: repeat(auto-fill, 64px);
+    grid-auto-rows: 72px;
+    row-gap: 8px;
+    column-gap: 8px;
+}
+
+.overview-item.item-dl-container {
+  display: grid;
+}
+
+.dl-file-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  grid-column-start: 0;
+  grid-column-end: 1;
+  grid-row-start: 0;
+  grid-row-end: 1;
+  .item-title {
+    color: rgba(66, 90, 112, 0.45);
+    width: 4.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+   }
+  .item-icon {
+    color: rgba(5, 124, 235, 0.277);
+    //  #2d8cf0
+    margin-bottom: 6px;
+  }
+}
+
+.dl-file-cover {
+  color: #425A70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  z-index: 24;
+  grid-column-start: 0;
+  grid-column-end: 1;
+  grid-row-start: 0;
+  grid-row-end: 1;
+}
