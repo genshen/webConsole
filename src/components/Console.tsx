@@ -19,6 +19,7 @@ import {
   RefreshIcon,
   SwapVerticalIcon,
   FullscreenIcon,
+  MinimizeIcon,
   LogOutIcon,
   CogIcon,
   ErrorIcon,
@@ -96,6 +97,7 @@ const Console = (props: RouteComponentProps) => {
   const terminalRef = useRef<XTerm>(null)
   const { t } = useTranslation(['translation', 'console'])
   const [fitAddon] = useState<FitAddon>(new FitAddon())
+  const [fullscreen, setFullscreen] = useState<boolean>(false)
   const [connecting, setConnecting] = useState<ConnStatus>(
     ConnStatus.Connecting,
   )
@@ -164,6 +166,10 @@ const Console = (props: RouteComponentProps) => {
     }
   }, [])
 
+  useEffect(() => {
+    fitAddon.fit()
+  }, [fullscreen])
+
   const onWindowResize = () => {
     fitAddon.fit()
   }
@@ -226,9 +232,11 @@ const Console = (props: RouteComponentProps) => {
           />
         </Popover>
       </Pane>
-      <Pane flex={1}>
+      <Pane flex={1} overflowY="hidden">
         <XTerm
-          className="term-container"
+          className={
+            fullscreen ? 'term-container fullscreen' : 'term-container'
+          }
           options={{
             cursorBlink: true,
             bellStyle: 'sound',
@@ -270,14 +278,14 @@ const Console = (props: RouteComponentProps) => {
         onConfirm={() => {
           props.history.push('/signin')
         }}
-        containerProps={{ zIndex: 10 }}
+        containerProps={{ zIndex: 20 }}
         onCloseComplete={() => setShowCornerDialog(false)}>
         {t('console:ssh_disconn_dialog_text')}
       </CornerDialog>
       <Portal>
         <Pane
           className="toolbar"
-          zIndex={9}
+          zIndex={10}
           borderRadius={4}
           display="flex"
           flexDirection="column"
@@ -296,8 +304,15 @@ const Console = (props: RouteComponentProps) => {
             onClick={() => setSideSheetShwon(true)}>
             <SwapVerticalIcon color="white" size={10} />
           </Button>
-          <Button appearance="minimal" marginY={8} className="toolbar-item">
-            <FullscreenIcon color="white" size={10} />
+          <Button
+            appearance="minimal"
+            marginY={8}
+            className="toolbar-item"
+            onClick={() => {
+              setFullscreen(!fullscreen)
+            }}>
+            {!fullscreen && <FullscreenIcon color="white" size={10} />}
+            {fullscreen && <MinimizeIcon color="white" size={10} />}
           </Button>
           <Button appearance="minimal" marginY={8} className="toolbar-item">
             <CogIcon color="white" size={10} />
