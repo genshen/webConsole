@@ -11,6 +11,11 @@ const sshWebSocket = {
     // term.socket = websocket;
     let messageBuffer = ''
     const handleWebSocketMessage = function (ev: MessageEvent) {
+      if (ev.data instanceof ArrayBuffer) {
+        // it is Binary websocket data
+        term.write(new Uint8Array(ev.data))
+        return
+      }
       if (bufferedTime && bufferedTime > 0) {
         if (messageBuffer) {
           messageBuffer += ev.data

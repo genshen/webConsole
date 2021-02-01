@@ -146,6 +146,7 @@ const Console = (props: RouteComponentProps) => {
         ),
       ),
     )
+    ws.binaryType = 'arraybuffer'
     ws.onopen = () => {
       setConnecting(ConnStatus.ConnectionAlive)
     }
