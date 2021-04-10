@@ -1,5 +1,11 @@
 import React from 'react'
-import { DocumentIcon, FolderCloseIcon, Strong, toaster } from 'evergreen-ui'
+import {
+  DocumentIcon,
+  DocumentOpenIcon,
+  FolderCloseIcon,
+  Strong,
+  toaster,
+} from 'evergreen-ui'
 import { useTranslation } from 'react-i18next'
 import { saveAs } from 'file-saver'
 import axios from 'axios'
@@ -8,7 +14,7 @@ import Config from '../../config/config'
 import Utils from '../../libs/utils'
 import apiRouters from '../../config/api_routers'
 import stringFormat from '../../libs/string_format'
-import { CurrentPath, FileItem } from './files_types'
+import { CurrentPath, FileItem, IsDir, IsSymbolLink } from './files_types'
 import DownloadingFile from './DownloadingFile'
 
 export type DownloadStatus = {
@@ -39,6 +45,8 @@ interface GridFileItemProps {
   dlEvent: DownloadEvent
 }
 
+let timer: NodeJS.Timeout
+
 // GridFileItem display a file item in grid view of files.
 // the file item can be directory, or normal file, or symbolic link.
 const GridFileItem = ({
@@ -52,7 +60,7 @@ const GridFileItem = ({
   const { t } = useTranslation(['console', 'files'])
 
   const onGridFileDoubleClicked = (fileItem: FileItem) => {
-    if (fileItem.is_dir) {
+    if (IsDir(fileItem) || IsSymbolLink(fileItem)) {
       // todo: set loading
       onPathChange(fileItem.path)
     }
@@ -80,7 +88,7 @@ const GridFileItem = ({
   }
 
   const onGridItemClicked = (fileItem: FileItem) => {
-    if (!fileItem.is_dir) {
+    if (!IsDir(fileItem)) {
       const path = fileItem.path
       const _t = sessionStorage.getItem(Config.jwt.tokenName)
       if (_t) {
@@ -124,7 +132,7 @@ const GridFileItem = ({
     }
   }
 
-  if (f.is_dir) {
+  if (IsDir(f)) {
     return (
       <a
         className="overview-item overview-item-flex"
@@ -133,8 +141,27 @@ const GridFileItem = ({
         }}>
         <FolderCloseIcon size={32} className="item-icon" />
         <Strong size={300} title={f.name} className="item-title">
-          {' '}
-          {f.name}{' '}
+          {f.name}
+        </Strong>
+      </a>
+    )
+  } else if (IsSymbolLink(f)) {
+    return (
+      <a
+        className="overview-item overview-item-flex"
+        onClick={(event) => {
+          clearTimeout(timer)
+          if (event.detail === 1) {
+            timer = setTimeout(() => {
+              onGridItemClicked(f)
+            }, 200)
+          } else if (event.detail === 2) {
+            onGridFileDoubleClicked(f)
+          }
+        }}>
+        <DocumentOpenIcon size={32} className="item-icon" />
+        <Strong size={300} title={f.name} className="item-title">
+          {f.name}
         </Strong>
       </a>
     )
@@ -155,8 +182,7 @@ const GridFileItem = ({
         }}>
         <DocumentIcon size={32} className="item-icon" />
         <Strong size={300} title={f.name} className="item-title">
-          {' '}
-          {f.name}{' '}
+          {f.name}
         </Strong>
       </a>
     )

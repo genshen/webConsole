@@ -29,6 +29,10 @@ import GriFileItem, {
 } from './files/GridFileItem'
 import {
   FileItem,
+  FileModeEmpty,
+  FileModeIsDir,
+  FileModeNormalFile,
+  IsDir,
   CurrentPath,
 } from './files/files_types'
 
@@ -53,7 +57,7 @@ interface SideSftpProps {
 }
 
 const DefaultFileList: Array<FileItem> = [
-  { name: HOME, path: '', is_dir: true, loading: false },
+  { name: HOME, path: '', mode: FileModeIsDir, loading: false },
 ]
 
 interface GridFileViewProps {
@@ -103,7 +107,7 @@ const GridFileView = ({
     }
     const item: FileItem = {
       name: '',
-      is_dir: true,
+      mode: FileModeIsDir,
       path: path,
       loading: false,
     }
@@ -161,10 +165,10 @@ const GridFileView = ({
       <div className="overview-group-items">
         {fileList
           .sort((a, b) => {
-            if (a.is_dir && !b.is_dir) {
+            if (IsDir(a) && !IsDir(b)) {
               return -1
             }
-            if (!a.is_dir && b.is_dir) {
+            if (!IsDir(a) && IsDir(b)) {
               return 1
             }
             return a.name == b.name ? 0 : a.name > b.name ? 1 : -1
@@ -240,7 +244,7 @@ const lsCmd = (
               }
               children.push({
                 name: ele.name,
-                is_dir: ele.is_dir,
+                mode: ele.mode,
                 path: ele.path,
                 loading: false,
                 children: [],
@@ -308,7 +312,7 @@ const FileTrans = ({
           // remove expand icon.
           children.push({
             name: '[empty]',
-            is_dir: false,
+            mode: FileModeEmpty,
             path: '',
             loading: false,
           })
@@ -379,7 +383,7 @@ const FileTrans = ({
       const item = {
         path: currentPath + SPLIT_CHAR + filename,
         name: filename,
-        is_dir: false,
+        mode: FileModeNormalFile,
         loading: false,
         children: [],
       }
