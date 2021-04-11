@@ -28,6 +28,7 @@ import {
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { FitAddon } from 'xterm-addon-fit'
+import { WebLinksAddon } from 'xterm-addon-web-links'
 
 import XTerm from './term/XTerm'
 import theme from './term/term_theme'
@@ -97,6 +98,7 @@ const Console = (props: RouteComponentProps) => {
   const terminalRef = useRef<XTerm>(null)
   const { t } = useTranslation(['translation', 'console'])
   const [fitAddon] = useState<FitAddon>(new FitAddon())
+  const [webLinksAddon] = useState<WebLinksAddon>(new WebLinksAddon())
   const [fullscreen, setFullscreen] = useState<boolean>(false)
   const [connecting, setConnecting] = useState<ConnStatus>(
     ConnStatus.Connecting,
@@ -243,7 +245,7 @@ const Console = (props: RouteComponentProps) => {
             bellStyle: 'sound',
             theme: theme.default_theme,
           }}
-          addons={[fitAddon]}
+          addons={[fitAddon, webLinksAddon]}
           ref={terminalRef}
         />
       </Pane>
