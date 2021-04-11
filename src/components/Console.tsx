@@ -220,7 +220,12 @@ const Console = (props: RouteComponentProps) => {
               </Menu.Group>
               <Menu.Divider />
               <Menu.Group>
-                <Menu.Item icon={LogOutIcon} intent="danger">
+                <Menu.Item
+                  icon={LogOutIcon}
+                  intent="danger"
+                  onSelect={() => {
+                    toaster.notify('under develop!', { id: 'dev' })
+                  }}>
                   {t('console:nav_user_exit')}
                 </Menu.Item>
               </Menu.Group>
@@ -261,7 +266,12 @@ const Console = (props: RouteComponentProps) => {
         <Button intent="success" onClick={() => setSideSheetShwon(true)}>
           SFTP
         </Button>
-        <Button intent="none" marginLeft="0.05rem">
+        <Button
+          intent="none"
+          marginLeft="0.05rem"
+          onClick={() => {
+            toaster.notify('under develop!', { id: 'dev' })
+          }}>
           Paste
         </Button>
         <Pane flex="1"></Pane>
@@ -297,7 +307,13 @@ const Console = (props: RouteComponentProps) => {
           position="fixed"
           top={120}
           right={64}>
-          <Button appearance="minimal" marginY={8} className="toolbar-item">
+          <Button
+            appearance="minimal"
+            marginY={8}
+            className="toolbar-item"
+            onClick={() => {
+              toaster.notify('under develop!', { id: 'dev' })
+            }}>
             <RefreshIcon color="white" size={10} />
           </Button>
           <Button
@@ -317,7 +333,13 @@ const Console = (props: RouteComponentProps) => {
             {!fullscreen && <FullscreenIcon color="white" size={10} />}
             {fullscreen && <MinimizeIcon color="white" size={10} />}
           </Button>
-          <Button appearance="minimal" marginY={8} className="toolbar-item">
+          <Button
+            appearance="minimal"
+            marginY={8}
+            className="toolbar-item"
+            onClick={() => {
+              toaster.notify('under develop!', { id: 'dev' })
+            }}>
             <CogIcon color="white" size={10} />
           </Button>
         </Pane>
