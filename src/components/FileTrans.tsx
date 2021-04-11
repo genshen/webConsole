@@ -116,7 +116,7 @@ const GridFileView = ({
       false,
       item,
       (path: string) => {
-        toaster.danger(t('console:file_transfer.error_while_ls', { dir: path }))
+        toaster.danger(t('console:file_transfer.error_while_ls') + path)
       },
       (children: FileItem[], error: boolean) => {
         if (!error) {
@@ -304,7 +304,7 @@ const FileTrans = ({
       true,
       item,
       (path: string) => {
-        toaster.danger(t('console:file_transfer.error_while_ls', { dir: path }))
+        toaster.danger(t('console:file_transfer.error_while_ls') + path)
       },
       (children: FileItem[], error: boolean) => {
         // todo empty-text
