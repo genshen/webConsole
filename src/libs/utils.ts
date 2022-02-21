@@ -8,13 +8,23 @@ const util = {
   },
   // url: relative url starting with '/'
   loadUrl: (url: string, params: string | null) => {
-    url = config.net.protocol + config.net.host + url + config.net.midParams
+    url =
+      config.net.protocol +
+      config.net.host +
+      config.net.api_base_url +
+      url +
+      config.net.midParams
     return params ? url + '?' + params : url
   },
   // url: relative url starting with '/'
   loadWebSocketUrl: (url: string, params: string) => {
     const protocol = config.net.webSocketProtocol
-    url = protocol + config.net.host + url + config.net.midParams
+    url =
+      protocol +
+      config.net.host +
+      config.net.api_base_url +
+      url +
+      config.net.midParams
     return params ? url + '?' + params : url
   },
 
