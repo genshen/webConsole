@@ -5,6 +5,9 @@ const config = {
     host: window.location.host,
     isVPN: false,
     midParams: '',
+    api_base_url: process.env.REACT_APP_API_BASE_URL
+      ? process.env.REACT_APP_API_BASE_URL
+      : '',
     api_domain: process.env.REACT_APP_API_URL
       ? process.env.REACT_APP_API_URL
       : window.location.host,
