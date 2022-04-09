@@ -23,21 +23,34 @@ interface FieldState {
 
 const checkHostFormat = (host: string) => {
   if (!host || host === '') {
-    return [false, '', 22]
+    return [false, '', 0]
   }
+  const index = host.lastIndexOf(':')
   const hostList = host.split(':')
-  if (hostList.length === 1) {
+  if (index == -1) {
+    // ipv4 or domain without port inside address
+    return [true, host, 22]
+  } else if (hostList.length == 8 || hostList.length == 1) {
+    // ipv6 without port inside address
     return [true, host, 22]
   }
-  const ok =
+
+  if (
+    hostList.length === 9 &&
+    hostList[8].length !== 0 &&
+    !isNaN(Number(hostList[8]))
+  ) {
+    // ipv6 with port inside address
+    return [true, host.slice(0, index), parseInt(hostList[8])]
+  } else if (
     hostList.length === 2 &&
     hostList[1].length !== 0 &&
     !isNaN(Number(hostList[1]))
-  if (ok) {
+  ) {
+    // ipv4 or domain with port inside address
     return [true, hostList[0], parseInt(hostList[1])]
-  } else {
-    return [false, host, 22]
   }
+  return [false, host, 22]
 }
 
 const Signin = (props: RouteComponentProps) => {
