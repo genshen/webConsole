@@ -21,23 +21,43 @@ interface FieldState {
   value: string
 }
 
-const checkHostFormat = (host: string) => {
+export const checkHostFormat = (host: string) => {
   if (!host || host === '') {
-    return [false, '', 22]
+    return [false, '', 0]
   }
+  const index = host.lastIndexOf(':')
   const hostList = host.split(':')
-  if (hostList.length === 1) {
+  if (index == -1) {
+    // ipv4 or domain without port inside address
+    return [true, host, 22]
+  } else if (hostList.length === 2) {
+    if (hostList[1].length !== 0 && !isNaN(Number(hostList[1]))) {
+      // ipv4 or domain with port inside address
+      return [true, hostList[0], parseInt(hostList[1])]
+    }else {
+      return [false, host, 22]
+    }
+  }
+
+  // ipv6 case
+  const left_brackets = host.lastIndexOf('[')
+  const right_brackets = host.lastIndexOf(']')
+  if (left_brackets == -1 && right_brackets == -1) {
     return [true, host, 22]
   }
-  const ok =
-    hostList.length === 2 &&
-    hostList[1].length !== 0 &&
-    !isNaN(Number(hostList[1]))
-  if (ok) {
-    return [true, hostList[0], parseInt(hostList[1])]
-  } else {
-    return [false, host, 22]
+  if (left_brackets == 0 && right_brackets != -1 && left_brackets < right_brackets) {
+    // check passed, now we split host and port
+    const pure_host = host.slice(left_brackets + 1, right_brackets)
+    if (index == right_brackets + 1) { // has port
+      const port_str = host.slice(index + 1)
+      if (port_str && !isNaN(Number(port_str))) {
+        return [true, pure_host, parseInt(port_str)]
+      }
+    } else {
+      return [true, pure_host, 22]
+    }
   }
+  return [false, host, 22]
 }
 
 const Signin = (props: RouteComponentProps) => {
