@@ -21,7 +21,7 @@ interface FieldState {
   value: string
 }
 
-const checkHostFormat = (host: string) => {
+export const checkHostFormat = (host: string) => {
   if (!host || host === '') {
     return [false, '', 0]
   }
@@ -30,25 +30,32 @@ const checkHostFormat = (host: string) => {
   if (index == -1) {
     // ipv4 or domain without port inside address
     return [true, host, 22]
-  } else if (hostList.length == 8 || hostList.length == 1) {
-    // ipv6 without port inside address
-    return [true, host, 22]
+  } else if (hostList.length === 2) {
+    if (hostList[1].length !== 0 && !isNaN(Number(hostList[1]))) {
+      // ipv4 or domain with port inside address
+      return [true, hostList[0], parseInt(hostList[1])]
+    }else {
+      return [false, host, 22]
+    }
   }
 
-  if (
-    hostList.length === 9 &&
-    hostList[8].length !== 0 &&
-    !isNaN(Number(hostList[8]))
-  ) {
-    // ipv6 with port inside address
-    return [true, host.slice(0, index), parseInt(hostList[8])]
-  } else if (
-    hostList.length === 2 &&
-    hostList[1].length !== 0 &&
-    !isNaN(Number(hostList[1]))
-  ) {
-    // ipv4 or domain with port inside address
-    return [true, hostList[0], parseInt(hostList[1])]
+  // ipv6 case
+  const left_brackets = host.lastIndexOf('[')
+  const right_brackets = host.lastIndexOf(']')
+  if (left_brackets == -1 && right_brackets == -1) {
+    return [true, host, 22]
+  }
+  if (left_brackets == 0 && right_brackets != -1 && left_brackets < right_brackets) {
+    // check passed, now we split host and port
+    const pure_host = host.slice(left_brackets + 1, right_brackets)
+    if (index == right_brackets + 1) { // has port
+      const port_str = host.slice(index + 1)
+      if (port_str && !isNaN(Number(port_str))) {
+        return [true, pure_host, parseInt(port_str)]
+      }
+    } else {
+      return [true, pure_host, 22]
+    }
   }
   return [false, host, 22]
 }
