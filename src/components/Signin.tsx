@@ -34,7 +34,7 @@ export const checkHostFormat = (host: string) => {
     if (hostList[1].length !== 0 && !isNaN(Number(hostList[1]))) {
       // ipv4 or domain with port inside address
       return [true, hostList[0], parseInt(hostList[1])]
-    }else {
+    } else {
       return [false, host, 22]
     }
   }
@@ -45,10 +45,15 @@ export const checkHostFormat = (host: string) => {
   if (left_brackets == -1 && right_brackets == -1) {
     return [true, host, 22]
   }
-  if (left_brackets == 0 && right_brackets != -1 && left_brackets < right_brackets) {
+  if (
+    left_brackets == 0 &&
+    right_brackets != -1 &&
+    left_brackets < right_brackets
+  ) {
     // check passed, now we split host and port
     const pure_host = host.slice(left_brackets + 1, right_brackets)
-    if (index == right_brackets + 1) { // has port
+    if (index == right_brackets + 1) {
+      // has port
       const port_str = host.slice(index + 1)
       if (port_str && !isNaN(Number(port_str))) {
         return [true, pure_host, parseInt(port_str)]
